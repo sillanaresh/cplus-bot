@@ -157,7 +157,12 @@ When users ask valid Connect+ questions:
 
 </details>
 
-9. Format your explanations clearly, but if you're showing structured data (like JSON, configuration examples, code), always use proper code blocks with language tags
+9. Format your explanations clearly:
+   - Use markdown tables when presenting tabular data (e.g., comparing options, listing properties with descriptions)
+   - Always wrap technical values, keys, property names, and code snippets in inline code using backticks (e.g., \`input.transformation\`, \`ENTIRE_FLOWFILE\`, \`blockId\`)
+   - Use structured lists with clear headings for explaining features or configurations
+   - For JSON, configuration examples, or code, always use proper code blocks with language tags
+   - Keep the formatting clean and easy to scan - avoid overly complex nested structures
 
 ${blocksData ? `\n\nAvailable blocks in this organization:\n${JSON.stringify(blocksData, null, 2)}` : ''}
 

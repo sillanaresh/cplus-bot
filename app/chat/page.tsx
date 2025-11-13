@@ -153,17 +153,19 @@ export default function ChatPage() {
                     : 'bg-gray-100 text-gray-900 border border-gray-200'
                 }`}
               >
-                {message.role === 'assistant' && (
-                  <button
-                    onClick={() => copyToClipboard(message.content)}
-                    className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
-                    title="Copy message"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-                )}
+                <button
+                  onClick={() => copyToClipboard(message.content)}
+                  className={`absolute top-2 right-2 p-1.5 rounded transition-colors ${
+                    message.role === 'user'
+                      ? 'text-blue-200 hover:text-white hover:bg-blue-700'
+                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'
+                  }`}
+                  title="Copy message"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
                 <div className="pr-8">
                   {message.role === 'user' ? (
                     <p className="whitespace-pre-wrap text-sm">{message.content}</p>
