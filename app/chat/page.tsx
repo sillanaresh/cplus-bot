@@ -77,13 +77,13 @@ export default function ChatPage() {
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold text-gray-900">Connect+ Copilot</h1>
+            <h1 className="text-sm font-semibold text-gray-900">Connect+ Copilot</h1>
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
               Org: {typeof window !== 'undefined' ? sessionStorage.getItem('connectplus_org_id') : ''}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-xs text-gray-600">
               <input
                 type="checkbox"
                 checked={autoScroll}
@@ -94,7 +94,7 @@ export default function ChatPage() {
             </label>
             <button
               onClick={handleClearChat}
-              className="px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+              className="px-3 py-1.5 text-xs text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             >
               Clear Chat
             </button>
@@ -106,14 +106,14 @@ export default function ChatPage() {
           <div className="mx-6 mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-medium text-amber-900">Session Expired</h3>
-                <p className="mt-1 text-sm text-amber-700">
+                <h3 className="text-xs font-medium text-amber-900">Session Expired</h3>
+                <p className="mt-1 text-xs text-amber-700">
                   Your session has expired. Please provide new credentials to continue.
                 </p>
               </div>
               <button
                 onClick={handleReauth}
-                className="ml-3 px-3 py-1.5 bg-amber-600 text-white text-sm rounded-md hover:bg-amber-700 transition-colors"
+                className="ml-3 px-3 py-1.5 bg-amber-600 text-white text-xs rounded-md hover:bg-amber-700 transition-colors"
               >
                 Re-authenticate
               </button>
@@ -129,10 +129,10 @@ export default function ChatPage() {
           {messages.length === 0 && (
             <div className="h-full flex items-center justify-center">
               <div className="text-center max-w-md">
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">
                   Welcome to Connect+ Copilot
                 </h2>
-                <p className="text-sm text-gray-600 leading-relaxed" style={{ lineHeight: '1.5' }}>
+                <p className="text-xs text-gray-600 leading-relaxed" style={{ lineHeight: '1.5' }}>
                   I'm your AI assistant for creating and managing Connect+ data flows.
                   Ask me to help you move data between sources, set up transformations,
                   or manage your dataflows.
@@ -168,9 +168,9 @@ export default function ChatPage() {
                 </button>
                 <div className="pr-8">
                   {message.role === 'user' ? (
-                    <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                    <p className="whitespace-pre-wrap text-xs">{message.content}</p>
                   ) : (
-                    <div className="prose prose-sm max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-sm prose-headings:my-3">
+                    <div className="prose prose-xs max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-xs prose-headings:my-3">
                       <ReactMarkdown
                         rehypePlugins={[rehypeRaw]}
                         remarkPlugins={[remarkGfm]}
@@ -193,7 +193,7 @@ export default function ChatPage() {
                             const match = /language-(\w+)/.exec(className || '');
                             return !inline ? (
                               <div className="relative my-3 not-prose">
-                                <pre className="bg-gray-800 text-gray-100 p-3 rounded-md overflow-x-auto text-sm">
+                                <pre className="bg-gray-800 text-gray-100 p-3 rounded-md overflow-x-auto text-xs">
                                   <code className={className} {...props}>
                                     {children}
                                   </code>
@@ -209,7 +209,7 @@ export default function ChatPage() {
                                 </button>
                               </div>
                             ) : (
-                              <code className="bg-gray-200 px-1.5 py-0.5 rounded text-sm" {...props}>
+                              <code className="bg-gray-200 px-1.5 py-0.5 rounded text-xs" {...props}>
                                 {children}
                               </code>
                             );
@@ -248,12 +248,12 @@ export default function ChatPage() {
               onChange={handleInputChange}
               placeholder="Ask me anything about Connect+ dataflows..."
               disabled={isLoading || sessionExpired}
-              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading || sessionExpired}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-xs font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Send
             </button>
