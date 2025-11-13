@@ -15,10 +15,10 @@ export default function ChatPage() {
 
   const { messages, input, handleInputChange, handleSubmit, setMessages, isLoading } = useChat({
     api: '/api/chat',
-    headers: {
+    headers: typeof window !== 'undefined' ? {
       'x-connectplus-cookie': sessionStorage.getItem('connectplus_cookie') || '',
       'x-connectplus-org-id': sessionStorage.getItem('connectplus_org_id') || '',
-    },
+    } : {},
     onError: (error) => {
       if (error.message.includes('401') || error.message.includes('403') || error.message.includes('expired')) {
         setSessionExpired(true);
