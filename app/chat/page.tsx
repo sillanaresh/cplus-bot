@@ -170,7 +170,7 @@ export default function ChatPage() {
                   {message.role === 'user' ? (
                     <p className="whitespace-pre-wrap text-xs">{message.content}</p>
                   ) : (
-                    <div className="prose prose-xs max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-xs prose-headings:my-3">
+                    <div className="text-xs max-w-none prose prose-sm prose-p:my-2 prose-p:text-xs prose-pre:my-0 prose-code:text-xs prose-headings:my-3 prose-headings:text-xs prose-strong:text-xs prose-li:text-xs prose-ul:text-xs prose-ol:text-xs">
                       <ReactMarkdown
                         rehypePlugins={[rehypeRaw]}
                         remarkPlugins={[remarkGfm]}
@@ -187,7 +187,7 @@ export default function ChatPage() {
                             }
 
                             // Otherwise render normal paragraph
-                            return <p className="my-2" {...props}>{children}</p>;
+                            return <p className="my-2 text-xs" {...props}>{children}</p>;
                           },
                           code: ({ node, inline, className, children, ...props }: any) => {
                             const match = /language-(\w+)/.exec(className || '');
