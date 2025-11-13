@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChat } from 'ai/react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
 
 export default function ChatPage() {
   const router = useRouter();
@@ -74,7 +76,12 @@ export default function ChatPage() {
       <div className="w-1/2 flex flex-col bg-white">
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-900">Connect+ Copilot</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-semibold text-gray-900">Connect+ Copilot</h1>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+              Org: {typeof window !== 'undefined' ? sessionStorage.getItem('connectplus_org_id') : ''}
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-gray-600">
               <input
@@ -163,6 +170,8 @@ export default function ChatPage() {
                   ) : (
                     <div className="prose prose-sm max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-sm">
                       <ReactMarkdown
+                        rehypePlugins={[rehypeRaw]}
+                        remarkPlugins={[remarkGfm]}
                         components={{
                           code: ({ node, inline, className, children, ...props }: any) => {
                             const match = /language-(\w+)/.exec(className || '');

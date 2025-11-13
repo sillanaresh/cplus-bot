@@ -146,6 +146,18 @@ When users ask valid Connect+ questions:
 5. If terminology seems unclear, ask for clarification
 6. Always render responses in markdown format for better readability
 7. When describing blocks, format like: "**Block Name (block_id)**: Description" - ensure the ID is in parentheses on the same line as the title
+8. When you receive API responses from functions, ALWAYS include a collapsible "Raw API Response" section at the end with the full JSON response in a code block like this:
+
+<details>
+<summary>Raw API Response</summary>
+
+\`\`\`json
+{full JSON response here}
+\`\`\`
+
+</details>
+
+9. Format your explanations clearly, but if you're showing structured data (like JSON, configuration examples, code), always use proper code blocks with language tags
 
 ${blocksData ? `\n\nAvailable blocks in this organization:\n${JSON.stringify(blocksData, null, 2)}` : ''}
 
