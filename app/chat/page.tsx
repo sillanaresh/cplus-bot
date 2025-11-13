@@ -38,8 +38,9 @@ export default function ChatPage() {
   }, [router]);
 
   useEffect(() => {
-    if (autoScroll && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (autoScroll && messagesEndRef.current && chatContainerRef.current) {
+      // Scroll to bottom without smooth behavior during streaming to prevent jumping
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages, autoScroll]);
 
@@ -139,13 +140,24 @@ export default function ChatPage() {
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-lg px-4 py-3 ${
+                className={`relative max-w-[80%] rounded-lg px-4 py-3 ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-900 border border-gray-200'
                 }`}
               >
-                <div className="prose prose-sm max-w-none">
+                {message.role === 'assistant' && (
+                  <button
+                    onClick={() => copyToClipboard(message.content)}
+                    className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                    title="Copy message"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                )}
+                <div className="prose prose-sm max-w-none pr-8">
                   {message.role === 'user' ? (
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   ) : (
@@ -162,9 +174,12 @@ export default function ChatPage() {
                               </pre>
                               <button
                                 onClick={() => copyToClipboard(String(children).replace(/\n$/, ''))}
-                                className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
+                                className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
+                                title="Copy code"
                               >
-                                Copy
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
                               </button>
                             </div>
                           ) : (
@@ -179,14 +194,6 @@ export default function ChatPage() {
                     </ReactMarkdown>
                   )}
                 </div>
-                {message.role === 'assistant' && (
-                  <button
-                    onClick={() => copyToClipboard(message.content)}
-                    className="mt-2 text-xs text-gray-500 hover:text-gray-700"
-                  >
-                    Copy message
-                  </button>
-                )}
               </div>
             </div>
           ))}
