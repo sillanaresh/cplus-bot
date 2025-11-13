@@ -170,11 +170,25 @@ export default function ChatPage() {
                   {message.role === 'user' ? (
                     <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                   ) : (
-                    <div className="prose prose-sm max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-sm">
+                    <div className="prose prose-sm max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-sm prose-headings:my-3">
                       <ReactMarkdown
                         rehypePlugins={[rehypeRaw]}
                         remarkPlugins={[remarkGfm]}
                         components={{
+                          p: ({ node, children, ...props }: any) => {
+                            // Check if children contains block elements (like code blocks or details)
+                            const hasBlockElement = node?.children?.some((child: any) =>
+                              child.tagName === 'div' || child.tagName === 'pre' || child.tagName === 'details'
+                            );
+
+                            // If it has block elements, render as fragment without <p> wrapper to avoid hydration errors
+                            if (hasBlockElement) {
+                              return <>{children}</>;
+                            }
+
+                            // Otherwise render normal paragraph
+                            return <p className="my-2" {...props}>{children}</p>;
+                          },
                           code: ({ node, inline, className, children, ...props }: any) => {
                             const match = /language-(\w+)/.exec(className || '');
                             return !inline ? (
