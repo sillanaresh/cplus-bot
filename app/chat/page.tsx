@@ -157,41 +157,43 @@ export default function ChatPage() {
                     </svg>
                   </button>
                 )}
-                <div className="prose prose-sm max-w-none pr-8">
+                <div className="pr-8">
                   {message.role === 'user' ? (
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                   ) : (
-                    <ReactMarkdown
-                      components={{
-                        code: ({ node, inline, className, children, ...props }: any) => {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline ? (
-                            <div className="relative">
-                              <pre className="bg-gray-800 text-gray-100 p-3 rounded-md overflow-x-auto text-sm">
-                                <code className={className} {...props}>
-                                  {children}
-                                </code>
-                              </pre>
-                              <button
-                                onClick={() => copyToClipboard(String(children).replace(/\n$/, ''))}
-                                className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
-                                title="Copy code"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                              </button>
-                            </div>
-                          ) : (
-                            <code className="bg-gray-200 px-1.5 py-0.5 rounded text-sm" {...props}>
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {message.content}
-                    </ReactMarkdown>
+                    <div className="prose prose-sm max-w-none prose-p:my-2 prose-pre:my-0 prose-code:text-sm">
+                      <ReactMarkdown
+                        components={{
+                          code: ({ node, inline, className, children, ...props }: any) => {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline ? (
+                              <div className="relative my-3 not-prose">
+                                <pre className="bg-gray-800 text-gray-100 p-3 rounded-md overflow-x-auto text-sm">
+                                  <code className={className} {...props}>
+                                    {children}
+                                  </code>
+                                </pre>
+                                <button
+                                  onClick={() => copyToClipboard(String(children).replace(/\n$/, ''))}
+                                  className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
+                                  title="Copy code"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ) : (
+                              <code className="bg-gray-200 px-1.5 py-0.5 rounded text-sm" {...props}>
+                                {children}
+                              </code>
+                            );
+                          },
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
                   )}
                 </div>
               </div>
