@@ -73,7 +73,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen flex" style={{ backgroundColor: '#FAF9F7' }}>
+    <div className="h-screen flex" style={{ backgroundColor: '#F5F1E8' }}>
       {/* Left Column - Forest Background */}
       <div
         className="w-1/2 border-r border-gray-200"
@@ -86,7 +86,7 @@ export default function ChatPage() {
       ></div>
 
       {/* Right Column - Chat Interface */}
-      <div className="w-1/2 flex flex-col" style={{ backgroundColor: '#FAF9F7' }}>
+      <div className="w-1/2 flex flex-col" style={{ backgroundColor: '#F5F1E8' }}>
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function ChatPage() {
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-900 border border-gray-200'
                 }`}
-                style={message.role === 'assistant' ? { backgroundColor: '#FAF9F7' } : undefined}
+                style={message.role === 'assistant' ? { backgroundColor: '#F5F1E8' } : undefined}
               >
                 <button
                   onClick={() => copyToClipboard(message.content)}
@@ -199,7 +199,7 @@ export default function ChatPage() {
 
           {isLoading && (
             <div className="flex justify-start">
-              <div className="border border-gray-200 rounded-lg px-4 py-3" style={{ backgroundColor: '#FAF9F7' }}>
+              <div className="border border-gray-200 rounded-lg px-4 py-3" style={{ backgroundColor: '#F5F1E8' }}>
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
