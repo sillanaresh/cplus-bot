@@ -6,16 +6,33 @@ An AI-powered conversational assistant for Capillary's Connect+ data ingestion p
 
 Connect+ Copilot is a ChatGPT-like interface that simplifies working with Connect+, Capillary's data ingestion tool. Instead of manually navigating through complex UI configurations, users can simply describe what they want to accomplish in plain English, and the AI copilot handles the technical details.
 
+The interface features a beautiful, minimalistic design with nature-inspired imagery that creates a calm, productive environment for data engineering tasks.
+
 ## Features
 
+### Core Capabilities
 - **Conversational Interface**: Chat with an AI assistant powered by GPT-4o to create and manage dataflows
 - **Smart API Integration**: Automatically fetches available blocks and metadata on first use
-- **Session Management**: Handles authentication with automatic session expiration detection
-- **Real-time Streaming**: Responses stream word-by-word with automatic scrolling
-- **Markdown Support**: Responses are beautifully formatted with code syntax highlighting
+- **Session Management**: Cookie-based authentication with logout functionality
+- **Real-time Streaming**: Responses stream word-by-word for immediate feedback
+- **Session Expiration Handling**: Automatic detection and re-authentication prompts
+
+### User Experience
+- **2-Column Layout**: Clean split-screen design with nature backgrounds and chat interface
+- **Random Nature Backgrounds**: Six beautiful nature images rotate on each session for visual variety
+- **Transparent Logo**: Professional Capillary branding with transparent background
+- **Auto-scroll Control**: Toggle automatic scrolling during AI responses
 - **Clear Chat**: Reset conversation and cache at any time
-- **Auto-scroll Toggle**: Control whether chat auto-scrolls with responses
-- **Session-based**: Each user gets an isolated, secure chat session
+- **Copy to Clipboard**: One-click copy for any message or code block
+
+### Enhanced Rendering
+- **Markdown Headings**: All heading levels (# through ######) render with proper styling
+- **HTML Tags Support**: Collapsible sections with `<details>` and `<summary>` tags
+- **Auto-formatted JSON**: API responses automatically formatted with 2-space indentation
+- **Code Blocks**: Syntax-highlighted code blocks with copy functionality
+- **Tables**: Beautiful markdown table rendering with borders and styling
+- **Inline Formatting**: Support for **bold text** and `inline code`
+- **Consistent Typography**: 14px font size across all messages for optimal readability
 
 ## Connect+ Capabilities
 
@@ -29,104 +46,35 @@ It also supports data transformations during the flow process.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), React, TypeScript
-- **UI**: Tailwind CSS with minimalistic design
-- **AI**: OpenAI GPT-4o with function calling
-- **API Integration**: Vercel AI SDK for streaming responses
-- **Deployment**: Vercel
+### Frontend
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript, React 19
+- **Styling**: Tailwind CSS with minimalistic design philosophy
 
-## Getting Started
+### AI & APIs
+- **AI Model**: OpenAI GPT-4o with function calling capabilities
+- **Streaming**: Vercel AI SDK for real-time response streaming
+- **API Integration**: RESTful Connect+ API endpoints
 
-### Prerequisites
+### UI/UX
+- **Design**: 2-column responsive layout
+- **Images**: Curated nature photography (waterfalls, forests, landscapes, architecture)
+- **Typography**: Consistent 14px (text-sm) across interface
+- **Colors**: Minimal palette with blue accents and gray tones
 
-- Node.js 18+ installed
-- Connect+ session cookie and organization ID
-- OpenAI API key (already configured in `.env.local`)
+### Deployment
+- **Platform**: Vercel
+- **Environment**: Production-ready with environment variable management
 
-### Installation
+## User Interface
 
-1. Clone the repository
-2. Install dependencies:
-```bash
-npm install
-```
+The application features a carefully crafted user experience:
 
-3. Set up environment variables (already configured):
-```bash
-# .env.local
-OPENAI_API_KEY=your_key_here
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000)
-
-### Usage
-
-1. On the home page, enter your:
-   - **Session Cookie**: Your Connect+ session cookie
-   - **Organization ID**: Your Connect+ org ID
-2. Click "Start Chat"
-3. Start asking questions or requesting dataflow operations:
-   - "Show me all available blocks"
-   - "Create a dataflow to move files from SFTP to S3"
-   - "What transformation blocks are available?"
-   - "Get details for block ID 57"
-
-### Authentication
-
-**Current Method** (Temporary):
-- Cookie-based authentication via `Cookie` header
-- Organization ID via `X-CAP-API-AUTH-ORG-ID` header
-
-**Future Method** (Planned):
-- Token-based authentication with username/password
-- Will be updated when available
-
-## Architecture
-
-### Session Flow
-1. User provides Cookie + Org ID on homepage
-2. Credentials stored in browser's sessionStorage (not persisted)
-3. On first message, automatically fetches all available blocks
-4. Blocks cached per organization for session duration
-5. GPT-4o handles conversation and decides when to call Connect+ APIs
-6. Streaming responses rendered in markdown
-
-### API Integration
-The copilot integrates with these Connect+ APIs:
-- `GET /api/v3/blocks` - Get all available blocks
-- `GET /api/v3/blocks/{id}/metadata` - Get block metadata
-- `POST /api/v3/dataflows/canvas` - Create new dataflow
-- `GET /api/v3/dataflows/{id}` - Get dataflow details
-- `GET /api/v3/dataflows/{id}/with-values` - Get full dataflow config
-
-### Security
-- OpenAI API key stored in `.env.local` (not committed to Git)
-- User credentials stored in sessionStorage (cleared on browser close)
-- Automatic session expiration detection and re-authentication prompt
-
-## Deployment
-
-Deploy to Vercel:
-
-```bash
-vercel
-```
-
-Or push to GitHub and connect to Vercel dashboard.
-
-## Future Enhancements
-
-- Token-based authentication
-- Persistent chat history (optional)
-- Visual dataflow builder preview
-- More Connect+ API integrations
-- Export/import chat sessions
-- Multi-language support
+- **Home Page**: 2-column layout with random nature background on the left and login form on the right
+- **Chat Page**: Forest background on the left with chat interface on the right
+- **Logo**: Transparent Capillary logo in top-left corner of home page
+- **Logout**: Red button in top-right corner for easy session termination
+- **Loading**: Clean white screen during initial image load (industry standard)
 
 ## License
 
