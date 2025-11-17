@@ -6,6 +6,58 @@ interface MessageRendererProps {
 }
 
 export default function MessageRenderer({ content, onCopy }: MessageRendererProps) {
+  // Helper function to render a subset of lines (for details content)
+  const renderLines = (lines: string[], startKey = 0): React.ReactNode[] => {
+    const elements: React.ReactNode[] = [];
+    let i = 0;
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Code block detection
+      if (line.trim().startsWith('```')) {
+        const language = line.trim().substring(3).trim() || '';
+        const codeLines: string[] = [];
+        i++;
+
+        while (i < lines.length && !lines[i].trim().startsWith('```')) {
+          codeLines.push(lines[i]);
+          i++;
+        }
+
+        let codeContent = codeLines.join('\n');
+
+        // Auto-format JSON
+        if (language === 'json' || language === '') {
+          try {
+            const parsed = JSON.parse(codeContent);
+            codeContent = JSON.stringify(parsed, null, 2);
+          } catch {
+            // Not valid JSON, keep as-is
+          }
+        }
+
+        elements.push(
+          <pre key={`code-${startKey}-${i}`} className="bg-gray-900 text-gray-100 rounded-md p-4 my-3 overflow-x-auto text-xs">
+            <code>{codeContent}</code>
+          </pre>
+        );
+        i++;
+        continue;
+      }
+
+      // Regular line
+      if (line.trim()) {
+        elements.push(
+          <div key={`line-${startKey}-${i}`}>{renderInlineFormatting(line)}</div>
+        );
+      }
+      i++;
+    }
+
+    return elements;
+  };
+
   const renderContent = () => {
     const lines = content.split('\n');
     const elements: React.ReactNode[] = [];
@@ -59,15 +111,16 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
           i++;
         }
 
+        // Render the details content using renderLines helper to support code blocks
+        const detailsContent = renderLines(detailsLines, i);
+
         elements.push(
           <details key={`details-${i}`} className="my-3 border border-gray-300 rounded-md p-3">
             <summary className="cursor-pointer font-semibold text-sm mb-2">
               {summaryText}
             </summary>
             <div className="mt-2 text-sm">
-              {detailsLines.map((detailLine, idx) => (
-                <div key={idx}>{renderInlineFormatting(detailLine)}</div>
-              ))}
+              {detailsContent}
             </div>
           </details>
         );
