@@ -10,12 +10,18 @@ export default function Home() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState('');
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     // Select a random background image on component mount
     const images = ['/bg-1.jpg', '/bg-2.jpg', '/bg-3.jpg', '/bg-4.jpg', '/bg-5.jpg', '/bg-6.jpg'];
     const randomImage = images[Math.floor(Math.random() * images.length)];
     setBackgroundImage(randomImage);
+
+    // Preload the image
+    const img = new Image();
+    img.onload = () => setImageLoaded(true);
+    img.src = randomImage;
   }, []);
 
   const handleStart = () => {
@@ -45,9 +51,10 @@ export default function Home() {
     <div className="h-screen bg-gray-50 flex">
       {/* Left Column - Random Background Image */}
       <div
-        className="w-1/2 bg-white border-r border-gray-200 relative"
+        className="w-1/2 border-r border-gray-200 relative transition-all duration-300"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
+          backgroundColor: '#8B9A8E',
+          backgroundImage: imageLoaded ? `url(${backgroundImage})` : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
