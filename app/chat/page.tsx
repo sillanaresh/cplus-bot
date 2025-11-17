@@ -57,6 +57,13 @@ export default function ChatPage() {
     router.push('/');
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('connectplus_cookie');
+    sessionStorage.removeItem('connectplus_org_id');
+    sessionStorage.removeItem('blocks_cache');
+    router.push('/');
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
@@ -67,8 +74,29 @@ export default function ChatPage() {
 
   return (
     <div className="h-screen bg-gray-50 flex">
-      {/* Left Column - Empty for now */}
-      <div className="w-1/2 bg-white border-r border-gray-200"></div>
+      {/* Left Column - Forest Background */}
+      <div
+        className="w-1/2 bg-white border-r border-gray-200 relative"
+        style={{
+          backgroundImage: 'url(/forest-bg.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Logo in top-left corner */}
+        <div className="absolute top-4 left-4">
+          <img
+            src="/logo.png"
+            alt="Capillary Logo"
+            className="h-10"
+            style={{
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+              mixBlendMode: 'multiply'
+            }}
+          />
+        </div>
+      </div>
 
       {/* Right Column - Chat Interface */}
       <div className="w-1/2 flex flex-col bg-white">
@@ -95,6 +123,12 @@ export default function ChatPage() {
               className="px-3 py-1.5 text-xs text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             >
               Clear Chat
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 text-xs text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+            >
+              Logout
             </button>
           </div>
         </div>
