@@ -73,10 +73,10 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen flex" style={{ backgroundColor: '#FAF9F7' }}>
       {/* Left Column - Forest Background */}
       <div
-        className="w-1/2 bg-white border-r border-gray-200"
+        className="w-1/2 border-r border-gray-200"
         style={{
           backgroundImage: 'url(/forest-bg.jpg)',
           backgroundSize: 'cover',
@@ -86,7 +86,7 @@ export default function ChatPage() {
       ></div>
 
       {/* Right Column - Chat Interface */}
-      <div className="w-1/2 flex flex-col bg-white">
+      <div className="w-1/2 flex flex-col" style={{ backgroundColor: '#FAF9F7' }}>
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -169,8 +169,9 @@ export default function ChatPage() {
                 className={`relative max-w-[80%] rounded-lg px-4 py-3 ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900 border border-gray-200'
+                    : 'text-gray-900 border border-gray-200'
                 }`}
+                style={message.role === 'assistant' ? { backgroundColor: '#FAF9F7' } : undefined}
               >
                 <button
                   onClick={() => copyToClipboard(message.content)}
@@ -198,7 +199,7 @@ export default function ChatPage() {
 
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3">
+              <div className="border border-gray-200 rounded-lg px-4 py-3" style={{ backgroundColor: '#FAF9F7' }}>
                 <div className="flex items-center gap-2 text-gray-600">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
