@@ -20,8 +20,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
         if (headingMatch) {
           const level = headingMatch[1].length;
           const headingText = headingMatch[2];
-          const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
-          const sizeClasses = {
+          const sizeClasses: { [key: number]: string } = {
             1: 'text-2xl font-bold my-4',
             2: 'text-xl font-bold my-3',
             3: 'text-lg font-semibold my-3',
@@ -29,10 +28,13 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
             5: 'text-sm font-semibold my-2',
             6: 'text-sm font-semibold my-2'
           };
+
           elements.push(
-            <HeadingTag key={`heading-${i}`} className={sizeClasses[level as keyof typeof sizeClasses]}>
-              {renderInlineFormatting(headingText)}
-            </HeadingTag>
+            React.createElement(
+              `h${level}`,
+              { key: `heading-${i}`, className: sizeClasses[level] },
+              renderInlineFormatting(headingText)
+            )
           );
           i++;
           continue;
