@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -9,6 +9,14 @@ export default function Home() {
   const [orgId, setOrgId] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState('');
+
+  useEffect(() => {
+    // Select a random background image on component mount
+    const images = ['/bg-1.jpg', '/bg-2.jpg', '/bg-3.jpg', '/bg-4.jpg', '/bg-5.jpg', '/bg-6.jpg'];
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+    setBackgroundImage(randomImage);
+  }, []);
 
   const handleStart = () => {
     setError('');
@@ -34,22 +42,31 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
-      {/* Logo in top-left corner */}
-      <div className="absolute top-6 left-6">
-        <img
-          src="/logo.png"
-          alt="Capillary Logo"
-          className="h-10"
-          style={{
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-            mixBlendMode: 'multiply'
-          }}
-        />
+    <div className="h-screen bg-gray-50 flex">
+      {/* Left Column - Random Background Image */}
+      <div
+        className="w-1/2 bg-white border-r border-gray-200 relative"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Logo in top-left corner */}
+        <div className="absolute top-6 left-6">
+          <img
+            src="/logo-transparent.png"
+            alt="Capillary Logo"
+            className="h-12"
+          />
+        </div>
       </div>
 
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      {/* Right Column - Login Form */}
+      <div className="w-1/2 flex items-center justify-center bg-white p-8">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold text-gray-900 mb-2">
               Connect+ Copilot
@@ -108,6 +125,7 @@ export default function Home() {
               Your credentials are stored securely in your browser session and are not saved permanently.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>
