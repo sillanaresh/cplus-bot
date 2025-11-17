@@ -18,10 +18,15 @@ export default function Home() {
     const randomImage = images[Math.floor(Math.random() * images.length)];
     setBackgroundImage(randomImage);
 
-    // Preload the image
+    // Preload the home page random image
     const img = new Image();
     img.onload = () => setImageLoaded(true);
     img.src = randomImage;
+
+    // Preload the chat page forest background (static image)
+    // This ensures instant loading when user navigates to chat page
+    const forestImg = new Image();
+    forestImg.src = '/forest-bg.jpg';
   }, []);
 
   const handleStart = () => {
