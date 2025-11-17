@@ -34,7 +34,20 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 relative">
+      {/* Logo in top-left corner */}
+      <div className="absolute top-6 left-6">
+        <img
+          src="/logo.png"
+          alt="Capillary Logo"
+          className="h-10"
+          style={{
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+            mixBlendMode: 'multiply'
+          }}
+        />
+      </div>
+
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <div className="mb-8">
