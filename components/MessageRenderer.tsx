@@ -14,6 +14,65 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
     while (i < lines.length) {
       const line = lines[i];
 
+      // Heading detection (###, ##, #)
+      if (line.trim().startsWith('#')) {
+        const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const headingText = headingMatch[2];
+          const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+          const sizeClasses = {
+            1: 'text-2xl font-bold my-4',
+            2: 'text-xl font-bold my-3',
+            3: 'text-lg font-semibold my-3',
+            4: 'text-base font-semibold my-2',
+            5: 'text-sm font-semibold my-2',
+            6: 'text-sm font-semibold my-2'
+          };
+          elements.push(
+            <HeadingTag key={`heading-${i}`} className={sizeClasses[level as keyof typeof sizeClasses]}>
+              {renderInlineFormatting(headingText)}
+            </HeadingTag>
+          );
+          i++;
+          continue;
+        }
+      }
+
+      // HTML tags detection (details, summary, etc.)
+      if (line.trim().startsWith('<details>')) {
+        const detailsLines: string[] = [];
+        let summaryText = '';
+        i++;
+
+        // Look for summary tag
+        if (i < lines.length && lines[i].trim().startsWith('<summary>')) {
+          summaryText = lines[i].trim().replace(/<\/?summary>/g, '');
+          i++;
+        }
+
+        // Collect content until </details>
+        while (i < lines.length && !lines[i].trim().startsWith('</details>')) {
+          detailsLines.push(lines[i]);
+          i++;
+        }
+
+        elements.push(
+          <details key={`details-${i}`} className="my-3 border border-gray-300 rounded-md p-3">
+            <summary className="cursor-pointer font-semibold text-sm mb-2">
+              {summaryText}
+            </summary>
+            <div className="mt-2 text-sm">
+              {detailsLines.map((detailLine, idx) => (
+                <div key={idx}>{renderInlineFormatting(detailLine)}</div>
+              ))}
+            </div>
+          </details>
+        );
+        i++;
+        continue;
+      }
+
       // Code block detection (```language)
       if (line.trim().startsWith('```')) {
         const language = line.trim().substring(3);
@@ -67,7 +126,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
 
       // Render line with inline formatting
       elements.push(
-        <div key={`line-${i}`} className="my-2 text-xs">
+        <div key={`line-${i}`} className="my-2 text-sm">
           {renderInlineFormatting(line)}
         </div>
       );
@@ -91,7 +150,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
     const rows = tableLines.slice(2).map(parseRow); // Skip separator line
 
     return (
-      <table key={key} className="min-w-full my-4 text-xs">
+      <table key={key} className="min-w-full my-4 text-sm">
         <thead className="bg-gray-100 border-b-2 border-gray-300">
           <tr>
             {headers.map((header, idx) => (
@@ -132,7 +191,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
       if (match[1]) {
         const code = match[1].slice(1, -1); // Remove backticks
         parts.push(
-          <code key={match.index} className="bg-gray-200 px-1.5 py-0.5 rounded text-xs">
+          <code key={match.index} className="bg-gray-200 px-1.5 py-0.5 rounded text-sm">
             {code}
           </code>
         );
@@ -158,5 +217,5 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
     return parts.length > 0 ? parts : text;
   };
 
-  return <div className="text-xs">{renderContent()}</div>;
+  return <div className="text-sm">{renderContent()}</div>;
 }
