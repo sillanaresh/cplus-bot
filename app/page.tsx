@@ -47,14 +47,22 @@ export default function Home() {
     router.push('/chat');
   };
 
+  // Don't render page until image is loaded
+  if (!imageLoaded) {
+    return (
+      <div className="h-screen bg-white flex items-center justify-center">
+        {/* Optional: Add a subtle fade-in effect when loaded */}
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen bg-gray-50 flex">
       {/* Left Column - Random Background Image */}
       <div
-        className="w-1/2 border-r border-gray-200 relative transition-all duration-300"
+        className="w-1/2 border-r border-gray-200 relative"
         style={{
-          backgroundColor: '#8B9A8E',
-          backgroundImage: imageLoaded ? `url(${backgroundImage})` : 'none',
+          backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
