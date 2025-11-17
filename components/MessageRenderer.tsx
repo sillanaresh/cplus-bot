@@ -164,7 +164,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
 
     return (
       <table key={key} className="min-w-full my-4 text-sm">
-        <thead className="bg-gray-100 border-b-2 border-gray-300">
+        <thead className="border-b-2 border-gray-300" style={{ backgroundColor: '#F5F3F0' }}>
           <tr>
             {headers.map((header, idx) => (
               <th key={idx} className="px-3 py-2 text-left font-semibold border border-gray-300">
@@ -175,7 +175,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
         </thead>
         <tbody>
           {rows.map((row, rowIdx) => (
-            <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+            <tr key={rowIdx} style={{ backgroundColor: rowIdx % 2 === 0 ? '#FAF9F7' : '#F5F3F0' }}>
               {row.map((cell, cellIdx) => (
                 <td key={cellIdx} className="px-3 py-2 border border-gray-200">
                   {renderInlineFormatting(cell)}
