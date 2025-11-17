@@ -86,7 +86,18 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
           i++;
         }
 
-        const codeContent = codeLines.join('\n');
+        let codeContent = codeLines.join('\n');
+
+        // Auto-format JSON with 2-space indentation (industry standard)
+        if (language === 'json' || language === '') {
+          try {
+            const parsed = JSON.parse(codeContent);
+            codeContent = JSON.stringify(parsed, null, 2);
+          } catch {
+            // Not valid JSON, keep as-is
+          }
+        }
+
         elements.push(
           <div key={`code-${i}`} className="relative my-3">
             <pre className="bg-gray-800 text-gray-100 p-3 rounded-md overflow-x-auto text-xs">
