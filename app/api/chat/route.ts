@@ -248,7 +248,7 @@ Remember: You have access to the blocks data, so you can reference specific bloc
       stream: true,
     });
 
-    const stream = OpenAIStream(streamResponse);
+    const stream = OpenAIStream(streamResponse as any);
     return new StreamingTextResponse(stream);
 
   } catch (error: any) {
