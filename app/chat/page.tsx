@@ -187,7 +187,7 @@ export default function ChatPage() {
                 </button>
                 <div className="pr-8">
                   {message.role === 'user' ? (
-                    <p className="whitespace-pre-wrap text-xs">{message.content}</p>
+                    <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                   ) : (
                     <MessageRenderer content={message.content} onCopy={copyToClipboard} />
                   )}
