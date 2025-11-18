@@ -6,16 +6,16 @@ import { getSystemPrompt, clearSystemPromptCache } from '@/lib/system-prompt';
 // Clear cache on module load to ensure fresh system prompt
 clearSystemPromptCache();
 
-// OPTION 1: OpenRouter (ACTIVE) - Use Claude Sonnet 4.5 via OpenRouter
-const openai = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
-});
-
-// OPTION 2: Direct OpenAI (BACKUP) - Uncomment to use OpenAI directly
+// OPTION 1: OpenRouter (BACKUP) - Use Claude Sonnet 4.5 via OpenRouter
 // const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
+//   apiKey: process.env.OPENROUTER_API_KEY,
+//   baseURL: 'https://openrouter.ai/api/v1',
 // });
+
+// OPTION 2: Direct OpenAI (ACTIVE) - Using GPT-4o
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Store blocks cache per session (in production, use Redis or similar)
 const blocksCache = new Map<string, any>();
@@ -143,7 +143,7 @@ export async function POST(req: Request) {
 
     // Initial completion with function calling
     const response = await openai.chat.completions.create({
-      model: 'anthropic/claude-sonnet-4.5', // Claude Sonnet 4.5 via OpenRouter
+      model: 'gpt-4o',
       messages: allMessages as any,
       functions,
       function_call: 'auto',
@@ -200,7 +200,7 @@ export async function POST(req: Request) {
       ];
 
       const finalResponse = await openai.chat.completions.create({
-        model: 'anthropic/claude-sonnet-4.5', // Claude Sonnet 4.5 via OpenRouter
+        model: 'gpt-4o',
         messages: messagesWithFunction as any,
         temperature: 0.7,
         stream: true,
@@ -212,7 +212,7 @@ export async function POST(req: Request) {
 
     // No function call, stream the response directly
     const streamResponse = await openai.chat.completions.create({
-      model: 'anthropic/claude-sonnet-4.5', // Claude Sonnet 4.5 via OpenRouter
+      model: 'gpt-4o',
       messages: allMessages as any,
       temperature: 0.7,
       stream: true,
