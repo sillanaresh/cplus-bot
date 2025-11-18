@@ -126,9 +126,13 @@ export class ConnectPlusClient {
     try {
       console.log('🚀 Starting createSimpleDataflow:', params);
 
-      // Step 1: Create canvas
+      // Step 1: Create canvas with unique name
+      // Add timestamp to ensure uniqueness
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Format: YYYY-MM-DDTHH-MM-SS
+      const uniqueName = `${params.name}_${timestamp}`;
+
       console.log('📝 Creating canvas...');
-      const canvasResponse = await this.createDataflowCanvas(params.name);
+      const canvasResponse = await this.createDataflowCanvas(uniqueName);
       const dataflowUuid = canvasResponse.dataflowId;
       console.log('✅ Canvas created:', dataflowUuid);
 
