@@ -21,20 +21,28 @@ export class ConnectPlusClient {
       ...options.headers,
     };
 
+    console.log(`📡 API Request: ${options.method || 'GET'} ${endpoint}`);
+
     const response = await fetch(url, {
       ...options,
       headers,
     });
+
+    console.log(`📥 API Response: ${response.status} ${response.statusText}`);
 
     if (response.status === 401 || response.status === 403) {
       throw new Error('Session expired. Please re-authenticate.');
     }
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`❌ API Error Response Body:`, errorText);
+      throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log(`✅ API Response Data:`, JSON.stringify(data).substring(0, 200) + '...');
+    return data;
   }
 
   /**
