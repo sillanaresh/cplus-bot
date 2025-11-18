@@ -43,9 +43,14 @@ export async function POST(req: Request) {
         blocksData = await client.getAllBlocks();
         blocksCache.set(orgId, blocksData);
       } catch (error: any) {
+        console.error('❌ Error fetching blocks:', error.message);
+        console.error('Cookie length:', cookie?.length);
+        console.error('Org ID:', orgId);
         if (error.message.includes('expired')) {
-          return new Response('Session expired', { status: 401 });
+          return new Response('Session expired. Please get a fresh cookie from Connect+', { status: 401 });
         }
+        // Return the actual error for debugging
+        return new Response(`Connect+ API Error: ${error.message}`, { status: 500 });
       }
     }
 
