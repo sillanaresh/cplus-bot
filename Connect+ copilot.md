@@ -26,7 +26,7 @@ Examples:
 - Current: Cookie + X-CAP-API-AUTH-ORG-ID header
 - Future: Token-based with username/password
 
-1. API to get details of all the blocks available 
+1. get all blocks 
 
 ```
 curl --location 'https://eucrm.connectplus.capillarytech.com/api/v3/blocks' \
@@ -36,7 +36,7 @@ curl --location 'https://eucrm.connectplus.capillarytech.com/api/v3/blocks' \
 --header 'Content-Length: 0'
 ```
 
-2. API to get all the metadata details of a specific block
+2. get specific details of a block
 
 ```
 curl --location 'https://eucrm.connectplus.capillarytech.com/api/v3/blocks/57/metadata' \
@@ -45,8 +45,8 @@ curl --location 'https://eucrm.connectplus.capillarytech.com/api/v3/blocks/57/me
 --header 'Cookie: ph_phc_66osOdYGIaEhFJqGovTvbT4NUDfFEUByR64aZg62Xsq_posthog=%7B%22distinct_id%22%3A%2201946d81-97e8-7d40-a01f-17b4f559704f%22%2C%22%24sesid%22%3A%5B1744446503554%2C%220196291c-8ce3-7a72-8144-58f29f9778da%22%2C1744446459107%5D%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22u%22%3A%22https%3A%2F%2Fwww.capillarytech.com%2Fspark-matrix-2024-loyalty%2F%22%7D%7D; SESSION=ZDZlNDYxMTItYWQyMC00ZjY3LTkwYzUtNTE5ZjNkYmUzZTRl'
 ```
 
-3. API to create an empty canvas for the dataflow
-
+3. create canvas
+name key in the path is nothing but the name of the dataflow. give a name as per use case. 
 ```
 curl --location --request POST 'https://eucrm.connectplus.capillarytech.com/api/v3/dataflows/canvas?name=Dataflow20262811125' \
 --header 'Content-Type: application/json' \
@@ -71,6 +71,539 @@ curl --location 'https://eucrm.connectplus.capillarytech.com/api/v3/dataflows/c3
 --header 'X-CAP-API-AUTH-ORG-ID: 0' \
 --header 'Cookie: ph_phc_66osOdYGIaEhFJqGovTvbT4NUDfFEUByR64aZg62Xsq_posthog=%7B%22distinct_id%22%3A%2201946d81-97e8-7d40-a01f-17b4f559704f%22%2C%22%24sesid%22%3A%5B1744446503554%2C%220196291c-8ce3-7a72-8144-58f29f9778da%22%2C1744446459107%5D%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%2C%22u%22%3A%22https%3A%2F%2Fwww.capillarytech.com%2Fspark-matrix-2024-loyalty%2F%22%7D%7D; SESSION=ZDZlNDYxMTItYWQyMC00ZjY3LTkwYzUtNTE5ZjNkYmUzZTRl'
 ```
+
+6. save or edit dataflow
+
+```
+curl --location --request PUT 'https://crm-nightly-new.connectplus.capillarytech.com/api/v3/dataflows' \
+--header 'Content-Type: application/json' \
+--header 'X-CAP-API-AUTH-ORG-ID: 0' \
+--header 'Cookie: SESSION=NDY4OWQzZDktNjcyMi00ZmJjLWEwMzEtNjIyODkzNDMwNjQ0; SESSION=ODM2ODE3NDQtZTI4Ni00NzExLTllOTMtODBmOTEwOTM5ZWJl' \
+--data-raw '{
+    "dataflowUuid": "eace7cf2-0199-1000-ffff-ffffcdb32ce4",
+    "description": "Updated pipeline for SFTP file processing",
+    "schedule": "0/1 0 * * * ? *",
+    "blocks": [
+        {
+            "id": "block1",
+            "blockId": "71",
+            "blockName": "Connect-to-Source",
+            "blockType": "sftp_read",
+            "destinationBlockIds": [
+                "block2"
+            ],
+            "blockInputs": [
+                {
+                    "id": "436",
+                    "name": "hostname",
+                    "key": "input.sftp.hostname",
+                    "type": "text",
+                    "value": "data.capillarydata.com",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "437",
+                    "name": "username",
+                    "key": "input.sftp.username",
+                    "type": "text",
+                    "value": "automationuser",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "438",
+                    "name": "password",
+                    "key": "input.sftp.password",
+                    "type": "password",
+                    "value": "Welivein@2025!",
+                    "dynamicType": null,
+                    "htmlType": "password",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "439",
+                    "name": "sourceDirectory",
+                    "key": "input.sftp.sourceDir",
+                    "type": "text",
+                    "value": "/Capillary testing/vtest4/source",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "440",
+                    "name": "fileRegex",
+                    "key": "input.fileRegex",
+                    "type": "text",
+                    "value": ".*.csv",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": [
+                        {
+                            "label": ".*.csv",
+                            "value": ".*.csv"
+                        },
+                        {
+                            "label": ".*",
+                            "value": ".*"
+                        }
+                    ]
+                },
+                {
+                    "id": "441",
+                    "name": "processedDirectory",
+                    "key": "input.sftp.processedDirectory",
+                    "type": "text",
+                    "value": "/Capillary testing/vtest4/process",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "442",
+                    "name": "unzipFiles",
+                    "key": "input.unzipFiles",
+                    "type": "checkbox",
+                    "value": "false",
+                    "dynamicType": null,
+                    "htmlType": "checkbox",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "445",
+                    "name": "apiErrorFilePath",
+                    "key": "input.sftp.apiErrorFilePath",
+                    "type": "text",
+                    "value": "/Capillary testing/vtest4/error",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "446",
+                    "name": "searchDirRecursively",
+                    "key": "input.searchDirRecursively",
+                    "type": "checkbox",
+                    "value": "false",
+                    "dynamicType": null,
+                    "htmlType": "checkbox",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "447",
+                    "name": "port",
+                    "key": "input.sftp.port",
+                    "type": "text",
+                    "value": "22",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4143",
+                    "name": "File Delimiter",
+                    "key": "input.fileDelimiter",
+                    "type": "text",
+                    "value": ",",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "443",
+                    "name": "Report Status Code",
+                    "key": "input.reportStatusCode",
+                    "type": "select",
+                    "value": "all",
+                    "dynamicType": null,
+                    "htmlType": "select",
+                    "childrenFields": {},
+                    "selectValues": [
+                        {
+                            "label": "all",
+                            "value": "all"
+                        },
+                        {
+                            "label": "success",
+                            "value": "success"
+                        },
+                        {
+                            "label": "failure",
+                            "value": "failure"
+                        }
+                    ]
+                },
+                {
+                    "id": "4163",
+                    "name": "Private Key Path",
+                    "key": "input.privateKeyPath",
+                    "type": "file",
+                    "value": null,
+                    "dynamicType": null,
+                    "htmlType": "file",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4164",
+                    "name": "Private Key Passphrase",
+                    "key": "input.privateKeyPassphrase",
+                    "type": "password",
+                    "value": null,
+                    "dynamicType": null,
+                    "htmlType": "password",
+                    "childrenFields": {},
+                    "selectValues": []
+                }
+            ]
+        },
+        {
+            "id": "block2",
+            "blockId": "72",
+            "blockName": "csv-to-json",
+            "blockType": "convert_csv_to_json",
+            "destinationBlockIds": [
+                "block3"
+            ],
+            "blockInputs": [
+                {
+                    "id": "4125",
+                    "name": "fileType",
+                    "key": "input.fileType",
+                    "type": "select",
+                    "value": "5c5b9607-0173-1000-87ad-a0b9ca44885f",
+                    "dynamicType": null,
+                    "htmlType": "select",
+                    "childrenFields": {},
+                    "selectValues": [
+                        {
+                            "label": "csv",
+                            "value": "5c5b9607-0173-1000-87ad-a0b9ca44885f"
+                        }
+                    ]
+                },
+                {
+                    "id": "4126",
+                    "name": "sortHeaders",
+                    "key": "input.sortHeaders",
+                    "type": "text",
+                    "value": null,
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4127",
+                    "name": "alphabeticalSort",
+                    "key": "input.alphabeticalSort",
+                    "type": "checkbox",
+                    "value": "false",
+                    "dynamicType": null,
+                    "htmlType": "checkbox",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4128",
+                    "name": "groupSize",
+                    "key": "input.groupSize",
+                    "type": "text",
+                    "value": "1",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4130",
+                    "name": "groupBy",
+                    "key": "input.groupBy",
+                    "type": "text",
+                    "value": null,
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                }
+            ]
+        },
+        {
+            "id": "block3",
+            "blockId": "73",
+            "blockName": "neo-block",
+            "blockType": "neo_block",
+            "destinationBlockIds": [
+                "block4"
+            ],
+            "blockInputs": [
+                {
+                    "id": "4132",
+                    "name": "neoDataFlows",
+                    "key": "input.neoDataFlows",
+                    "type": "neo",
+                    "value": "http://neo-a.default:3000/api/v1/xto6x/execute/transform",
+                    "dynamicType": null,
+                    "htmlType": "select",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4133",
+                    "name": "split response",
+                    "key": "input.splitResponse",
+                    "type": "select",
+                    "value": "true",
+                    "dynamicType": null,
+                    "htmlType": "select",
+                    "childrenFields": {},
+                    "selectValues": [
+                        {
+                            "label": "true",
+                            "value": "true"
+                        },
+                        {
+                            "label": "false",
+                            "value": "false"
+                        }
+                    ]
+                },
+                {
+                    "id": "4134",
+                    "name": "Authorization",
+                    "key": "input.authorization",
+                    "type": "text",
+                    "value": "Basic ${ten:append('\''product_sdk_user@capillarytech.com'\''):base64Encode()}",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4135",
+                    "name": "Max Retry",
+                    "key": "input.maxRetry",
+                    "type": "text",
+                    "value": "",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4136",
+                    "name": "Extra Retry Error Codes",
+                    "key": "input.extraRetryErrorCodes",
+                    "type": "text",
+                    "value": "",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "4137",
+                    "name": "Extra No Retry Error Codes",
+                    "key": "input.extraNoRetryErrorCodes",
+                    "type": "text",
+                    "value": "",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                }
+            ]
+        },
+        {
+            "id": "block4",
+            "blockId": "57",
+            "blockName": "API Block",
+            "blockType": "http_write",
+            "destinationBlockIds": [],
+            "blockInputs": [
+                {
+                    "id": "389",
+                    "name": "clientKey",
+                    "key": "input.clientKey",
+                    "type": "text",
+                    "value": "noDQtnN74JhDS2C57i1oLQmzS",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "390",
+                    "name": "clientSecret",
+                    "key": "input.clientSecret",
+                    "type": "password",
+                    "value": "b0LGijN4V9nJXEgmXftOSI2549E9YvV4ccZCZvxu",
+                    "dynamicType": null,
+                    "htmlType": "password",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "391",
+                    "name": "apiEndPoint",
+                    "key": "input.apiEndPoint",
+                    "type": "text",
+                    "value": "/v2/integrations/customer/transaction/bulk",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "392",
+                    "name": "apiBaseUrl",
+                    "key": "input.apiBaseUrl",
+                    "type": "text",
+                    "value": "https://nightly.intouch.capillarytech.com",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "393",
+                    "name": "apiMethod",
+                    "key": "input.apiMethod",
+                    "type": "select",
+                    "value": "POST",
+                    "dynamicType": null,
+                    "htmlType": "select",
+                    "childrenFields": {},
+                    "selectValues": [
+                        {
+                            "label": "POST",
+                            "value": "POST"
+                        },
+                        {
+                            "label": "PUT",
+                            "value": "PUT"
+                        }
+                    ]
+                },
+                {
+                    "id": "394",
+                    "name": "oAuthBaseUrl",
+                    "key": "input.oAuthBaseUrl",
+                    "type": "text",
+                    "value": "https://nightly.intouch.capillarytech.com",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "396",
+                    "name": "bulkSupport",
+                    "key": "input.bulkSupport",
+                    "type": "text",
+                    "value": true,
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "397",
+                    "name": "requestSplitPath",
+                    "key": "input.requestSplitPath",
+                    "type": "text",
+                    "value": "$.*",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "398",
+                    "name": "responseSplitPath",
+                    "key": "input.responseSplitPath",
+                    "type": "text",
+                    "value": "$.*",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "399",
+                    "name": "recoverableErrorCodes",
+                    "key": "input.recoverableErrorCodes",
+                    "type": "text",
+                    "value": "521,502,503,504",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "400",
+                    "name": "parsePathMap",
+                    "key": "input.parsePathMap",
+                    "type": "text",
+                    "value": "{\"status_code\":\"$.*.['\''errors'\''].*.code\",\"error_message\":\"$.*.['\''errors'\''].*.message\",\"entity_id\":\"$.entity.id\"}",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "401",
+                    "name": "yieldingErrorCodes",
+                    "key": "input.yieldingErrorCodes",
+                    "type": "text",
+                    "value": "429",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "402",
+                    "name": "maxRetries",
+                    "key": "input.maxRetries",
+                    "type": "text",
+                    "value": "3",
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                },
+                {
+                    "id": "403",
+                    "name": "additionalHeaders",
+                    "key": "input.additionalHeaders",
+                    "type": "text",
+                    "value": null,
+                    "dynamicType": null,
+                    "htmlType": "text",
+                    "childrenFields": {},
+                    "selectValues": []
+                }
+            ]
+        }
+    ]
+}'
+```
+
 
 **Important**: Later, more important API details will be added, that are required to build the agent. 
 
