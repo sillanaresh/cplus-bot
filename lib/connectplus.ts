@@ -84,4 +84,26 @@ export class ConnectPlusClient {
       method: 'GET',
     });
   }
+
+  /**
+   * Save or update a dataflow with blocks and configuration
+   */
+  async saveDataflow(dataflowConfig: {
+    dataflowUuid: string;
+    description: string;
+    schedule: string;
+    blocks: Array<{
+      id: string;
+      blockId: string;
+      blockName: string;
+      blockType: string;
+      destinationBlockIds: string[];
+      blockInputs: any[];
+    }>;
+  }) {
+    return this.makeRequest('/dataflows', {
+      method: 'PUT',
+      body: JSON.stringify(dataflowConfig),
+    });
+  }
 }

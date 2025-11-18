@@ -131,6 +131,64 @@ export async function POST(req: Request) {
           required: ['dataflowId'],
         },
       },
+      {
+        name: 'saveDataflow',
+        description: 'Save or update a dataflow with blocks and configuration. This creates the actual dataflow with all blocks connected in sequence. Use this after creating a canvas and getting block metadata.',
+        parameters: {
+          type: 'object',
+          properties: {
+            dataflowUuid: {
+              type: 'string',
+              description: 'The UUID from createDataflowCanvas response',
+            },
+            description: {
+              type: 'string',
+              description: 'Description of the dataflow (e.g., "Pipeline: sftp_read -> convert_csv_to_json -> http_write")',
+            },
+            schedule: {
+              type: 'string',
+              description: 'Cron schedule for the dataflow. Use "0/1 0 * * * ? *" as default.',
+              default: '0/1 0 * * * ? *',
+            },
+            blocks: {
+              type: 'array',
+              description: 'Array of blocks in execution order',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Block identifier in format "block1", "block2", etc.',
+                  },
+                  blockId: {
+                    type: 'string',
+                    description: 'The actual block ID from the blocks catalog (e.g., "71", "72")',
+                  },
+                  blockName: {
+                    type: 'string',
+                    description: 'Friendly name for the block (e.g., "SFTP-Source", "CSV-to-JSON")',
+                  },
+                  blockType: {
+                    type: 'string',
+                    description: 'The type from getBlockMetadata response (e.g., "sftp_read", "http_write")',
+                  },
+                  destinationBlockIds: {
+                    type: 'array',
+                    description: 'Array of next block IDs. Empty array for last block.',
+                    items: { type: 'string' },
+                  },
+                  blockInputs: {
+                    type: 'array',
+                    description: 'The blockInputs array from getBlockMetadata response',
+                  },
+                },
+                required: ['id', 'blockId', 'blockName', 'blockType', 'destinationBlockIds', 'blockInputs'],
+              },
+            },
+          },
+          required: ['dataflowUuid', 'description', 'schedule', 'blocks'],
+        },
+      },
     ];
 
     // Load system prompt from MD files with blocks data
@@ -177,6 +235,14 @@ export async function POST(req: Request) {
             break;
           case 'getDataflowWithValues':
             functionResult = await client.getDataflowWithValues(functionArgs.dataflowId);
+            break;
+          case 'saveDataflow':
+            functionResult = await client.saveDataflow({
+              dataflowUuid: functionArgs.dataflowUuid,
+              description: functionArgs.description,
+              schedule: functionArgs.schedule || '0/1 0 * * * ? *',
+              blocks: functionArgs.blocks,
+            });
             break;
           default:
             functionResult = { error: 'Unknown function' };
