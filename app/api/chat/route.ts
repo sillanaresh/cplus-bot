@@ -3,9 +3,16 @@ import OpenAI from 'openai';
 import { ConnectPlusClient } from '@/lib/connectplus';
 import { getSystemPrompt } from '@/lib/system-prompt';
 
+// OPTION 1: OpenRouter (ACTIVE) - Use Claude Sonnet 4.5 via OpenRouter
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: 'https://openrouter.ai/api/v1',
 });
+
+// OPTION 2: Direct OpenAI (BACKUP) - Uncomment to use OpenAI directly
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 // Store blocks cache per session (in production, use Redis or similar)
 const blocksCache = new Map<string, any>();
@@ -121,7 +128,8 @@ export async function POST(req: Request) {
 
     // Initial completion with function calling
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'anthropic/claude-sonnet-4-20250514', // Claude Sonnet 4.5 via OpenRouter
+      // model: 'openai/gpt-4o', // Backup: Switch to this if using OpenAI directly
       messages: allMessages as any,
       functions,
       function_call: 'auto',
@@ -178,7 +186,8 @@ export async function POST(req: Request) {
       ];
 
       const finalResponse = await openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'anthropic/claude-sonnet-4-20250514', // Claude Sonnet 4.5 via OpenRouter
+        // model: 'openai/gpt-4o', // Backup: Switch to this if using OpenAI directly
         messages: messagesWithFunction as any,
         temperature: 0.7,
         stream: true,
@@ -190,7 +199,8 @@ export async function POST(req: Request) {
 
     // No function call, stream the response directly
     const streamResponse = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'anthropic/claude-sonnet-4-20250514', // Claude Sonnet 4.5 via OpenRouter
+      // model: 'openai/gpt-4o', // Backup: Switch to this if using OpenAI directly
       messages: allMessages as any,
       temperature: 0.7,
       stream: true,
