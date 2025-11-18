@@ -115,42 +115,59 @@ export class ConnectPlusClient {
     name: string;
     blockIds: number[];
   }) {
-    // Step 1: Create canvas
-    const canvasResponse = await this.createDataflowCanvas(params.name);
-    const dataflowUuid = canvasResponse.dataflowId;
+    try {
+      console.log('🚀 Starting createSimpleDataflow:', params);
 
-    // Step 2: Fetch metadata for each block
-    const blockMetadataPromises = params.blockIds.map(blockId =>
-      this.getBlockMetadata(blockId)
-    );
-    const blocksMetadata = await Promise.all(blockMetadataPromises);
+      // Step 1: Create canvas
+      console.log('📝 Creating canvas...');
+      const canvasResponse = await this.createDataflowCanvas(params.name);
+      const dataflowUuid = canvasResponse.dataflowId;
+      console.log('✅ Canvas created:', dataflowUuid);
 
-    // Step 3: Build blocks array
-    const blocks = blocksMetadata.map((metadata, index) => {
-      const blockId = params.blockIds[index];
-      const isLastBlock = index === blocksMetadata.length - 1;
+      // Step 2: Fetch metadata for each block
+      console.log('📦 Fetching metadata for blocks:', params.blockIds);
+      const blockMetadataPromises = params.blockIds.map(blockId =>
+        this.getBlockMetadata(blockId)
+      );
+      const blocksMetadata = await Promise.all(blockMetadataPromises);
+      console.log('✅ Metadata fetched for', blocksMetadata.length, 'blocks');
 
-      return {
-        id: `block${index + 1}`,
-        blockId: String(blockId),
-        blockName: this.generateBlockName(metadata.type),
-        blockType: metadata.type,
-        destinationBlockIds: isLastBlock ? [] : [`block${index + 2}`],
-        blockInputs: metadata.blockInputs,
-      };
-    });
+      // Step 3: Build blocks array
+      const blocks = blocksMetadata.map((metadata, index) => {
+        const blockId = params.blockIds[index];
+        const isLastBlock = index === blocksMetadata.length - 1;
 
-    // Step 4: Generate description
-    const blockTypes = blocksMetadata.map(m => m.type).join(' → ');
-    const description = `Pipeline: ${blockTypes}`;
+        return {
+          id: `block${index + 1}`,
+          blockId: String(blockId),
+          blockName: this.generateBlockName(metadata.type),
+          blockType: metadata.type,
+          destinationBlockIds: isLastBlock ? [] : [`block${index + 2}`],
+          blockInputs: metadata.blockInputs,
+        };
+      });
+      console.log('🔗 Built blocks array:', blocks.map(b => b.blockType).join(' → '));
 
-    // Step 5: Save the dataflow
-    return this.saveDataflow({
-      dataflowUuid,
-      description,
-      schedule: '0/1 0 * * * ? *',
-      blocks,
-    });
+      // Step 4: Generate description
+      const blockTypes = blocksMetadata.map(m => m.type).join(' → ');
+      const description = `Pipeline: ${blockTypes}`;
+
+      // Step 5: Save the dataflow
+      console.log('💾 Saving dataflow...');
+      const result = await this.saveDataflow({
+        dataflowUuid,
+        description,
+        schedule: '0/1 0 * * * ? *',
+        blocks,
+      });
+      console.log('✅ Dataflow saved successfully:', result);
+
+      return result;
+    } catch (error: any) {
+      console.error('❌ Error in createSimpleDataflow:', error.message);
+      console.error('   Stack:', error.stack);
+      throw error;
+    }
   }
 
   /**
