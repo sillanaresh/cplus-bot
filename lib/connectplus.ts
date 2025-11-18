@@ -127,9 +127,9 @@ export class ConnectPlusClient {
       console.log('🚀 Starting createSimpleDataflow:', params);
 
       // Step 1: Create canvas with unique name
-      // Add short random ID to ensure uniqueness (6 characters)
-      const randomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-      const uniqueName = `${params.name} ${randomId}`;
+      // Add epoch timestamp to ensure uniqueness
+      const epoch = Date.now();
+      const uniqueName = `${params.name}_${epoch}`;
 
       console.log('📝 Creating canvas...');
       const canvasResponse = await this.createDataflowCanvas(uniqueName);
