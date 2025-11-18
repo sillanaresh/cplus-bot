@@ -106,4 +106,70 @@ export class ConnectPlusClient {
       body: JSON.stringify(dataflowConfig),
     });
   }
+
+  /**
+   * Create a complete dataflow with just block IDs (simplified helper)
+   * This handles all the complexity: creating canvas, fetching metadata, and saving
+   */
+  async createSimpleDataflow(params: {
+    name: string;
+    blockIds: number[];
+  }) {
+    // Step 1: Create canvas
+    const canvasResponse = await this.createDataflowCanvas(params.name);
+    const dataflowUuid = canvasResponse.dataflowId;
+
+    // Step 2: Fetch metadata for each block
+    const blockMetadataPromises = params.blockIds.map(blockId =>
+      this.getBlockMetadata(blockId)
+    );
+    const blocksMetadata = await Promise.all(blockMetadataPromises);
+
+    // Step 3: Build blocks array
+    const blocks = blocksMetadata.map((metadata, index) => {
+      const blockId = params.blockIds[index];
+      const isLastBlock = index === blocksMetadata.length - 1;
+
+      return {
+        id: `block${index + 1}`,
+        blockId: String(blockId),
+        blockName: this.generateBlockName(metadata.type),
+        blockType: metadata.type,
+        destinationBlockIds: isLastBlock ? [] : [`block${index + 2}`],
+        blockInputs: metadata.blockInputs,
+      };
+    });
+
+    // Step 4: Generate description
+    const blockTypes = blocksMetadata.map(m => m.type).join(' → ');
+    const description = `Pipeline: ${blockTypes}`;
+
+    // Step 5: Save the dataflow
+    return this.saveDataflow({
+      dataflowUuid,
+      description,
+      schedule: '0/1 0 * * * ? *',
+      blocks,
+    });
+  }
+
+  /**
+   * Generate a friendly block name from block type
+   */
+  private generateBlockName(blockType: string): string {
+    const nameMap: { [key: string]: string } = {
+      'sftp_read': 'SFTP-Source',
+      'sftp_write': 'SFTP-Destination',
+      's3_read': 'S3-Source',
+      's3_write': 'S3-Destination',
+      'http_write': 'API-Writer',
+      'http_read': 'API-Reader',
+      'convert_csv_to_json': 'CSV-to-JSON',
+      'neo_block': 'Transform',
+      'kafka_read': 'Kafka-Source',
+      'kafka_write': 'Kafka-Destination',
+    };
+
+    return nameMap[blockType] || blockType.replace(/_/g, '-').toUpperCase();
+  }
 }

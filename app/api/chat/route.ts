@@ -132,8 +132,27 @@ export async function POST(req: Request) {
         },
       },
       {
+        name: 'createSimpleDataflow',
+        description: 'Create a complete dataflow with just block IDs. This is the EASIEST way to create a dataflow - just provide a name and the block IDs in order. The backend handles all complexity (canvas creation, metadata fetching, stitching). Use this as the primary method for creating dataflows.',
+        parameters: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'Name for the dataflow (e.g., "SFTP to S3 Transfer", "Kafka to API Pipeline")',
+            },
+            blockIds: {
+              type: 'array',
+              description: 'Array of block IDs in execution order. Example: [71, 62] for sftp_read -> s3_write',
+              items: { type: 'number' },
+            },
+          },
+          required: ['name', 'blockIds'],
+        },
+      },
+      {
         name: 'saveDataflow',
-        description: 'Save or update a dataflow with blocks and configuration. This creates the actual dataflow with all blocks connected in sequence. Use this after creating a canvas and getting block metadata.',
+        description: 'Advanced: Save or update a dataflow with full manual configuration. Only use this if you need complete control over block configuration. For most cases, use createSimpleDataflow instead.',
         parameters: {
           type: 'object',
           properties: {
@@ -236,6 +255,12 @@ export async function POST(req: Request) {
             break;
           case 'getDataflowWithValues':
             functionResult = await client.getDataflowWithValues(functionArgs.dataflowId);
+            break;
+          case 'createSimpleDataflow':
+            functionResult = await client.createSimpleDataflow({
+              name: functionArgs.name,
+              blockIds: functionArgs.blockIds,
+            });
             break;
           case 'saveDataflow':
             functionResult = await client.saveDataflow({
