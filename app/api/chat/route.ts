@@ -180,6 +180,7 @@ export async function POST(req: Request) {
                   blockInputs: {
                     type: 'array',
                     description: 'The blockInputs array from getBlockMetadata response',
+                    items: { type: 'object' },
                   },
                 },
                 required: ['id', 'blockId', 'blockName', 'blockType', 'destinationBlockIds', 'blockInputs'],
