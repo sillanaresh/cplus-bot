@@ -44,7 +44,10 @@ export default function Home() {
 
     setIsLoading(true);
 
-    // Store credentials in sessionStorage
+    // Clear any old credentials and cache first
+    sessionStorage.clear();
+
+    // Store new credentials in sessionStorage
     sessionStorage.setItem('connectplus_cookie', cookie.trim());
     sessionStorage.setItem('connectplus_org_id', orgId.trim());
 
