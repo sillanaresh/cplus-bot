@@ -261,7 +261,7 @@ export async function POST(req: Request) {
 
     // Handle tool calls (new format)
     if (firstChoice.message.tool_calls && firstChoice.message.tool_calls.length > 0) {
-      const toolCall = firstChoice.message.tool_calls[0];
+      const toolCall = firstChoice.message.tool_calls[0] as any;
       const functionName = toolCall.function.name;
       const functionArgs = JSON.parse(toolCall.function.arguments);
 
