@@ -71,149 +71,170 @@ export async function POST(req: Request) {
       }
     }
 
-    // Define function schemas for Connect+ APIs
-    const functions: OpenAI.Chat.Completions.ChatCompletionCreateParams.Function[] = [
+    // Define tool schemas for Connect+ APIs (using new tools format)
+    const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
       {
-        name: 'getAllBlocks',
-        description: 'Get a list of all available blocks in Connect+. Use this to see what data source/destination types and transformation blocks are available.',
-        parameters: {
-          type: 'object',
-          properties: {},
-          required: [],
-        },
-      },
-      {
-        name: 'getBlockMetadata',
-        description: 'Get detailed metadata for a specific block by its ID. This includes configuration options, parameters, and capabilities.',
-        parameters: {
-          type: 'object',
-          properties: {
-            blockId: {
-              type: 'number',
-              description: 'The ID of the block to get metadata for',
-            },
+        type: 'function',
+        function: {
+          name: 'getAllBlocks',
+          description: 'Get a list of all available blocks in Connect+. Use this to see what data source/destination types and transformation blocks are available.',
+          parameters: {
+            type: 'object',
+            properties: {},
+            required: [],
           },
-          required: ['blockId'],
         },
       },
       {
-        name: 'createDataflowCanvas',
-        description: 'Create a new empty dataflow canvas with a given name. This is the first step in creating a new dataflow.',
-        parameters: {
-          type: 'object',
-          properties: {
-            name: {
-              type: 'string',
-              description: 'The name for the new dataflow',
-            },
-          },
-          required: ['name'],
-        },
-      },
-      {
-        name: 'getDataflow',
-        description: 'Get basic details of an existing dataflow by its ID.',
-        parameters: {
-          type: 'object',
-          properties: {
-            dataflowId: {
-              type: 'string',
-              description: 'The UUID of the dataflow to retrieve',
-            },
-          },
-          required: ['dataflowId'],
-        },
-      },
-      {
-        name: 'getDataflowWithValues',
-        description: 'Get full details of an existing dataflow including all configuration values.',
-        parameters: {
-          type: 'object',
-          properties: {
-            dataflowId: {
-              type: 'string',
-              description: 'The UUID of the dataflow to retrieve',
-            },
-          },
-          required: ['dataflowId'],
-        },
-      },
-      {
-        name: 'createSimpleDataflow',
-        description: 'Create a complete dataflow with just block IDs. This is the EASIEST way to create a dataflow - just provide a name and the block IDs in order. The backend handles all complexity (canvas creation, metadata fetching, stitching). Use this as the primary method for creating dataflows.',
-        parameters: {
-          type: 'object',
-          properties: {
-            name: {
-              type: 'string',
-              description: 'Name for the dataflow (e.g., "SFTP to S3 Transfer", "Kafka to API Pipeline")',
-            },
-            blockIds: {
-              type: 'array',
-              description: 'Array of block IDs in execution order. Example: [71, 62] for sftp_read -> s3_write',
-              items: { type: 'number' },
-            },
-          },
-          required: ['name', 'blockIds'],
-        },
-      },
-      {
-        name: 'saveDataflow',
-        description: 'Advanced: Save or update a dataflow with full manual configuration. Only use this if you need complete control over block configuration. For most cases, use createSimpleDataflow instead.',
-        parameters: {
-          type: 'object',
-          properties: {
-            dataflowUuid: {
-              type: 'string',
-              description: 'The UUID from createDataflowCanvas response',
-            },
-            description: {
-              type: 'string',
-              description: 'Description of the dataflow (e.g., "Pipeline: sftp_read -> convert_csv_to_json -> http_write")',
-            },
-            schedule: {
-              type: 'string',
-              description: 'Cron schedule for the dataflow. Use "0/1 0 * * * ? *" as default.',
-              default: '0/1 0 * * * ? *',
-            },
-            blocks: {
-              type: 'array',
-              description: 'Array of blocks in execution order',
-              items: {
-                type: 'object',
-                properties: {
-                  id: {
-                    type: 'string',
-                    description: 'Block identifier in format "block1", "block2", etc.',
-                  },
-                  blockId: {
-                    type: 'string',
-                    description: 'The actual block ID from the blocks catalog (e.g., "71", "72")',
-                  },
-                  blockName: {
-                    type: 'string',
-                    description: 'Friendly name for the block (e.g., "SFTP-Source", "CSV-to-JSON")',
-                  },
-                  blockType: {
-                    type: 'string',
-                    description: 'The type from getBlockMetadata response (e.g., "sftp_read", "http_write")',
-                  },
-                  destinationBlockIds: {
-                    type: 'array',
-                    description: 'Array of next block IDs. Empty array for last block.',
-                    items: { type: 'string' },
-                  },
-                  blockInputs: {
-                    type: 'array',
-                    description: 'The blockInputs array from getBlockMetadata response',
-                    items: { type: 'object' },
-                  },
-                },
-                required: ['id', 'blockId', 'blockName', 'blockType', 'destinationBlockIds', 'blockInputs'],
+        type: 'function',
+        function: {
+          name: 'getBlockMetadata',
+          description: 'Get detailed metadata for a specific block by its ID. This includes configuration options, parameters, and capabilities.',
+          parameters: {
+            type: 'object',
+            properties: {
+              blockId: {
+                type: 'number',
+                description: 'The ID of the block to get metadata for',
               },
             },
+            required: ['blockId'],
           },
-          required: ['dataflowUuid', 'description', 'schedule', 'blocks'],
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'createDataflowCanvas',
+          description: 'Create a new empty dataflow canvas with a given name. This is the first step in creating a new dataflow.',
+          parameters: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                description: 'The name for the new dataflow',
+              },
+            },
+            required: ['name'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'getDataflow',
+          description: 'Get basic details of an existing dataflow by its ID.',
+          parameters: {
+            type: 'object',
+            properties: {
+              dataflowId: {
+                type: 'string',
+                description: 'The UUID of the dataflow to retrieve',
+              },
+            },
+            required: ['dataflowId'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'getDataflowWithValues',
+          description: 'Get full details of an existing dataflow including all configuration values.',
+          parameters: {
+            type: 'object',
+            properties: {
+              dataflowId: {
+                type: 'string',
+                description: 'The UUID of the dataflow to retrieve',
+              },
+            },
+            required: ['dataflowId'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'createSimpleDataflow',
+          description: 'Create a complete dataflow with just block IDs. This is the EASIEST way to create a dataflow - just provide a name and the block IDs in order. The backend handles all complexity (canvas creation, metadata fetching, stitching). Use this as the primary method for creating dataflows.',
+          parameters: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                description: 'Name for the dataflow (e.g., "SFTP to S3 Transfer", "Kafka to API Pipeline")',
+              },
+              blockIds: {
+                type: 'array',
+                description: 'Array of block IDs in execution order. Example: [71, 62] for sftp_read -> s3_write',
+                items: { type: 'number' },
+              },
+            },
+            required: ['name', 'blockIds'],
+          },
+        },
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'saveDataflow',
+          description: 'Advanced: Save or update a dataflow with full manual configuration. Only use this if you need complete control over block configuration. For most cases, use createSimpleDataflow instead.',
+          parameters: {
+            type: 'object',
+            properties: {
+              dataflowUuid: {
+                type: 'string',
+                description: 'The UUID from createDataflowCanvas response',
+              },
+              description: {
+                type: 'string',
+                description: 'Description of the dataflow (e.g., "Pipeline: sftp_read -> convert_csv_to_json -> http_write")',
+              },
+              schedule: {
+                type: 'string',
+                description: 'Cron schedule for the dataflow. Use "0/1 0 * * * ? *" as default.',
+                default: '0/1 0 * * * ? *',
+              },
+              blocks: {
+                type: 'array',
+                description: 'Array of blocks in execution order',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      description: 'Block identifier in format "block1", "block2", etc.',
+                    },
+                    blockId: {
+                      type: 'string',
+                      description: 'The actual block ID from the blocks catalog (e.g., "71", "72")',
+                    },
+                    blockName: {
+                      type: 'string',
+                      description: 'Friendly name for the block (e.g., "SFTP-Source", "CSV-to-JSON")',
+                    },
+                    blockType: {
+                      type: 'string',
+                      description: 'The type from getBlockMetadata response (e.g., "sftp_read", "http_write")',
+                    },
+                    destinationBlockIds: {
+                      type: 'array',
+                      description: 'Array of next block IDs. Empty array for last block.',
+                      items: { type: 'string' },
+                    },
+                    blockInputs: {
+                      type: 'array',
+                      description: 'The blockInputs array from getBlockMetadata response',
+                      items: { type: 'object' },
+                    },
+                  },
+                  required: ['id', 'blockId', 'blockName', 'blockType', 'destinationBlockIds', 'blockInputs'],
+                },
+              },
+            },
+            required: ['dataflowUuid', 'description', 'schedule', 'blocks'],
+          },
         },
       },
     ];
@@ -226,22 +247,23 @@ export async function POST(req: Request) {
 
     const allMessages = [systemMessage, ...messages];
 
-    // Initial completion with function calling
+    // Initial completion with tool calling (new format)
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: allMessages as any,
-      functions,
-      function_call: 'auto',
+      tools,
+      tool_choice: 'auto',
       temperature: 0.7,
-      stream: false, // We'll handle streaming separately for function calls
+      stream: false, // We'll handle streaming separately for tool calls
     });
 
     const firstChoice = response.choices[0];
 
-    // Handle function calls
-    if (firstChoice.message.function_call) {
-      const functionName = firstChoice.message.function_call.name;
-      const functionArgs = JSON.parse(firstChoice.message.function_call.arguments);
+    // Handle tool calls (new format)
+    if (firstChoice.message.tool_calls && firstChoice.message.tool_calls.length > 0) {
+      const toolCall = firstChoice.message.tool_calls[0];
+      const functionName = toolCall.function.name;
+      const functionArgs = JSON.parse(toolCall.function.arguments);
 
       let functionResult: any;
 
@@ -287,13 +309,13 @@ export async function POST(req: Request) {
         functionResult = { error: error.message };
       }
 
-      // Add function result to messages and get final response
+      // Add tool result to messages and get final response (new format)
       const messagesWithFunction = [
         ...allMessages,
         firstChoice.message,
         {
-          role: 'function',
-          name: functionName,
+          role: 'tool',
+          tool_call_id: toolCall.id,
           content: JSON.stringify(functionResult),
         },
       ];
