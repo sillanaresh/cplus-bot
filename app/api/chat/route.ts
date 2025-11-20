@@ -28,7 +28,14 @@ export async function POST(req: Request) {
     const cookie = req.headers.get('x-connectplus-cookie');
     const orgId = req.headers.get('x-connectplus-org-id');
 
+    console.log('🔐 API Request received:');
+    console.log('   Cookie present:', !!cookie);
+    console.log('   Cookie length:', cookie?.length);
+    console.log('   Cookie preview:', cookie?.substring(0, 30) + '...');
+    console.log('   Org ID:', orgId);
+
     if (!cookie || !orgId) {
+      console.error('❌ Missing credentials');
       return new Response('Missing authentication credentials', { status: 401 });
     }
 
