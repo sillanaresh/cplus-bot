@@ -6,16 +6,16 @@ import { getSystemPrompt, clearSystemPromptCache } from '@/lib/system-prompt';
 // Clear cache on module load to ensure fresh system prompt
 clearSystemPromptCache();
 
-// OPTION 1: OpenRouter (BACKUP) - Use Claude Sonnet 4.5 via OpenRouter
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENROUTER_API_KEY,
-//   baseURL: 'https://openrouter.ai/api/v1',
-// });
-
-// OPTION 2: Direct OpenAI (ACTIVE) - Using GPT-4o
+// OPTION 1: OpenRouter (ACTIVE) - Using GPT-4o via OpenRouter
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: 'https://openrouter.ai/api/v1',
 });
+
+// OPTION 2: Direct OpenAI (BACKUP) - Using GPT-4o
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 // Store blocks cache per session (in production, use Redis or similar)
 const blocksCache = new Map<string, any>();
