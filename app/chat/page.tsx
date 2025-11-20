@@ -20,7 +20,10 @@ export default function ChatPage() {
       'x-connectplus-org-id': sessionStorage.getItem('connectplus_org_id') || '',
     } : {},
     onError: (error) => {
+      console.error('🚨 Chat error:', error);
+      console.error('   Error message:', error.message);
       if (error.message.includes('401') || error.message.includes('403') || error.message.includes('expired')) {
+        console.error('   → Triggering session expired UI');
         setSessionExpired(true);
       }
     },
@@ -29,6 +32,12 @@ export default function ChatPage() {
   useEffect(() => {
     const cookie = sessionStorage.getItem('connectplus_cookie');
     const orgId = sessionStorage.getItem('connectplus_org_id');
+
+    console.log('🔑 Chat page initialized');
+    console.log('   Cookie present:', !!cookie);
+    console.log('   Cookie length:', cookie?.length);
+    console.log('   Cookie preview:', cookie?.substring(0, 30) + '...');
+    console.log('   Org ID:', orgId);
 
     if (!cookie || !orgId) {
       router.push('/');
