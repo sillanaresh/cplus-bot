@@ -259,67 +259,98 @@ export async function POST(req: Request) {
 
     const firstChoice = response.choices[0];
 
-    // Handle tool calls (new format)
+    // Handle tool calls (supports multiple tool calls in one turn)
     if (firstChoice.message.tool_calls && firstChoice.message.tool_calls.length > 0) {
-      const toolCall = firstChoice.message.tool_calls[0] as any;
-      const functionName = toolCall.function.name;
-      const functionArgs = JSON.parse(toolCall.function.arguments);
+      const toolCalls = firstChoice.message.tool_calls;
 
-      let functionResult: any;
+      console.log(`🔧 Processing ${toolCalls.length} tool call(s):`);
+      toolCalls.forEach((tc: any, idx: number) => {
+        console.log(`   ${idx + 1}. ${tc.function.name}(${tc.function.arguments})`);
+      });
 
-      try {
-        switch (functionName) {
-          case 'getAllBlocks':
-            functionResult = await client.getAllBlocks();
-            blocksCache.set(orgId, functionResult);
-            break;
-          case 'getBlockMetadata':
-            functionResult = await client.getBlockMetadata(functionArgs.blockId);
-            break;
-          case 'createDataflowCanvas':
-            functionResult = await client.createDataflowCanvas(functionArgs.name);
-            break;
-          case 'getDataflow':
-            functionResult = await client.getDataflow(functionArgs.dataflowId);
-            break;
-          case 'getDataflowWithValues':
-            functionResult = await client.getDataflowWithValues(functionArgs.dataflowId);
-            break;
-          case 'createSimpleDataflow':
-            functionResult = await client.createSimpleDataflow({
-              name: functionArgs.name,
-              blockIds: functionArgs.blockIds,
-            });
-            break;
-          case 'saveDataflow':
-            functionResult = await client.saveDataflow({
-              dataflowUuid: functionArgs.dataflowUuid,
-              description: functionArgs.description,
-              schedule: functionArgs.schedule || '0/1 0 * * * ? *',
-              blocks: functionArgs.blocks,
-            });
-            break;
-          default:
-            functionResult = { error: 'Unknown function' };
+      // Execute all tool calls and collect results
+      const toolResults: any[] = [];
+
+      for (const toolCall of toolCalls) {
+        const functionName = toolCall.function.name;
+        const functionArgs = JSON.parse(toolCall.function.arguments);
+
+        console.log(`⚙️  Executing: ${functionName}`);
+        console.log(`   Arguments:`, functionArgs);
+
+        let functionResult: any;
+
+        try {
+          switch (functionName) {
+            case 'getAllBlocks':
+              functionResult = await client.getAllBlocks();
+              blocksCache.set(orgId, functionResult);
+              break;
+            case 'getBlockMetadata':
+              functionResult = await client.getBlockMetadata(functionArgs.blockId);
+              break;
+            case 'createDataflowCanvas':
+              functionResult = await client.createDataflowCanvas(functionArgs.name);
+              break;
+            case 'getDataflow':
+              functionResult = await client.getDataflow(functionArgs.dataflowId);
+              break;
+            case 'getDataflowWithValues':
+              functionResult = await client.getDataflowWithValues(functionArgs.dataflowId);
+              break;
+            case 'createSimpleDataflow':
+              functionResult = await client.createSimpleDataflow({
+                name: functionArgs.name,
+                blockIds: functionArgs.blockIds,
+              });
+              break;
+            case 'saveDataflow':
+              functionResult = await client.saveDataflow({
+                dataflowUuid: functionArgs.dataflowUuid,
+                description: functionArgs.description,
+                schedule: functionArgs.schedule || '0/1 0 * * * ? *',
+                blocks: functionArgs.blocks,
+              });
+              break;
+            default:
+              functionResult = { error: 'Unknown function' };
+          }
+
+          console.log(`   ✅ ${functionName} succeeded`);
+        } catch (error: any) {
+          console.error(`   ❌ ${functionName} failed:`, error.message);
+
+          // If session expired, return immediately
+          if (error.message.includes('expired')) {
+            return new Response('Session expired', { status: 401 });
+          }
+
+          // For other errors, return error result but continue processing other tools
+          functionResult = {
+            error: error.message,
+            functionName: functionName,
+            arguments: functionArgs
+          };
         }
-      } catch (error: any) {
-        if (error.message.includes('expired')) {
-          return new Response('Session expired', { status: 401 });
-        }
-        functionResult = { error: error.message };
-      }
 
-      // Add tool result to messages and get final response (new format)
-      const messagesWithFunction = [
-        ...allMessages,
-        firstChoice.message,
-        {
+        // Add this tool result to the results array
+        toolResults.push({
           role: 'tool',
           tool_call_id: toolCall.id,
           content: JSON.stringify(functionResult),
-        },
+        });
+      }
+
+      console.log(`✅ All ${toolResults.length} tool call(s) processed`);
+
+      // Add assistant message and all tool results to conversation
+      const messagesWithFunction = [
+        ...allMessages,
+        firstChoice.message,
+        ...toolResults,
       ];
 
+      // Get final response from GPT-4o with all tool results
       const finalResponse = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: messagesWithFunction as any,

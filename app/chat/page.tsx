@@ -85,14 +85,23 @@ export default function ChatPage() {
     <div className="h-screen flex" style={{ backgroundColor: '#F5F1E8' }}>
       {/* Left Column - Forest Background */}
       <div
-        className="w-1/2 border-r border-gray-200"
+        className="w-1/2 border-r border-gray-200 relative"
         style={{
           backgroundImage: 'url(/forest-bg.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}
-      ></div>
+      >
+        {/* Logo in top-left corner */}
+        <div className="absolute top-6 left-6">
+          <img
+            src="/logo-transparent.png"
+            alt="Capillary Logo"
+            className="h-12"
+          />
+        </div>
+      </div>
 
       {/* Right Column - Chat Interface */}
       <div className="w-1/2 flex flex-col" style={{ backgroundColor: '#F5F1E8' }}>
