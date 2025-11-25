@@ -160,9 +160,8 @@ export class ConnectPlusClient {
       });
       console.log('🔗 Built blocks array:', blocks.map(b => b.blockType).join(' → '));
 
-      // Step 4: Generate description
-      const blockTypes = blocksMetadata.map(m => m.type).join(' → ');
-      const description = `Pipeline: ${blockTypes}`;
+      // Step 4: Generate user-friendly description
+      const description = this.generateDescription(blocksMetadata);
 
       // Step 5: Save the dataflow
       console.log('💾 Saving dataflow...');
@@ -174,7 +173,12 @@ export class ConnectPlusClient {
       });
       console.log('✅ Dataflow saved successfully:', result);
 
-      return result;
+      // Return enhanced result with the name for display
+      return {
+        ...result,
+        name: uniqueName,
+        description,
+      };
     } catch (error: any) {
       console.error('❌ Error in createSimpleDataflow:', error.message);
       console.error('   Stack:', error.stack);
@@ -186,7 +190,7 @@ export class ConnectPlusClient {
    * Generate a friendly block name from block type
    */
   private generateBlockName(blockType: string): string {
-    const nameMap: { [key: string]: string } = {
+    const nameMap: { [key: string]: string} = {
       'sftp_read': 'SFTP-Source',
       'sftp_write': 'SFTP-Destination',
       's3_read': 'S3-Source',
@@ -200,5 +204,77 @@ export class ConnectPlusClient {
     };
 
     return nameMap[blockType] || blockType.replace(/_/g, '-').toUpperCase();
+  }
+
+  /**
+   * Generate a user-friendly English description from block metadata
+   * Max 100 characters, describes what the dataflow does
+   */
+  private generateDescription(blocksMetadata: any[]): string {
+    if (blocksMetadata.length === 0) {
+      return 'Empty dataflow';
+    }
+
+    // Get human-readable names
+    const blockNames = blocksMetadata.map(m => this.generateBlockName(m.type));
+
+    // Determine the flow type
+    const firstBlock = blocksMetadata[0];
+    const lastBlock = blocksMetadata[blocksMetadata.length - 1];
+
+    const source = this.getSourceDescription(firstBlock.type);
+    const destination = this.getDestinationDescription(lastBlock.type);
+
+    // Build description based on number of blocks
+    if (blocksMetadata.length === 2) {
+      // Simple source -> destination
+      return `Move data from ${source} to ${destination}`;
+    } else if (blocksMetadata.length === 3) {
+      // Source -> Transform -> Destination
+      const transform = this.getTransformDescription(blocksMetadata[1].type);
+      return `Read from ${source}, ${transform}, write to ${destination}`;
+    } else {
+      // Complex flow: just mention source and destination
+      const transformCount = blocksMetadata.length - 2;
+      return `Data pipeline: ${source} → ${transformCount} transforms → ${destination}`;
+    }
+  }
+
+  /**
+   * Get human-readable source description
+   */
+  private getSourceDescription(blockType: string): string {
+    const sourceMap: { [key: string]: string } = {
+      'sftp_read': 'SFTP',
+      's3_read': 'S3',
+      'http_read': 'API',
+      'kafka_read': 'Kafka stream',
+    };
+    return sourceMap[blockType] || 'source';
+  }
+
+  /**
+   * Get human-readable destination description
+   */
+  private getDestinationDescription(blockType: string): string {
+    const destMap: { [key: string]: string } = {
+      'sftp_write': 'SFTP',
+      's3_write': 'S3',
+      'http_write': 'API',
+      'kafka_write': 'Kafka stream',
+    };
+    return destMap[blockType] || 'destination';
+  }
+
+  /**
+   * Get human-readable transform description
+   */
+  private getTransformDescription(blockType: string): string {
+    const transformMap: { [key: string]: string } = {
+      'convert_csv_to_json': 'convert CSV to JSON',
+      'neo_block': 'transform data',
+      'decrypt_content': 'decrypt',
+    };
+    return transformMap[blockType] || 'transform';
   }
 }
