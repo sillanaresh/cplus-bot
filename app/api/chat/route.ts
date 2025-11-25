@@ -272,8 +272,8 @@ export async function POST(req: Request) {
       const toolResults: any[] = [];
 
       for (const toolCall of toolCalls) {
-        const functionName = toolCall.function.name;
-        const functionArgs = JSON.parse(toolCall.function.arguments);
+        const functionName = (toolCall as any).function.name;
+        const functionArgs = JSON.parse((toolCall as any).function.arguments);
 
         console.log(`⚙️  Executing: ${functionName}`);
         console.log(`   Arguments:`, functionArgs);
@@ -336,7 +336,7 @@ export async function POST(req: Request) {
         // Add this tool result to the results array
         toolResults.push({
           role: 'tool',
-          tool_call_id: toolCall.id,
+          tool_call_id: (toolCall as any).id,
           content: JSON.stringify(functionResult),
         });
       }
