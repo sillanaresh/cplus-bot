@@ -1,42 +1,20 @@
 const fs = require('fs');
 const { PNG } = require('pngjs');
 
-// Read the logo
-const logo = PNG.sync.read(fs.readFileSync('./public/logo-transparent.png'));
+// Read the pre-cropped logo (just the circles, no text)
+const logo = PNG.sync.read(fs.readFileSync('./public/logo-icon.png'));
 
-// Crop just the logo part (left side, excluding the "capillary" text)
-// The logo is approximately in the first 86x86 pixels (square)
-const cropWidth = 86;
-const cropHeight = 86;
-const cropX = 0;
-const cropY = 0;
-
-// Create a cropped image with just the logo circles
-const cropped = new PNG({ width: cropWidth, height: cropHeight });
-
-for (let y = 0; y < cropHeight; y++) {
-  for (let x = 0; x < cropWidth; x++) {
-    const srcIdx = (logo.width * (y + cropY) + (x + cropX)) << 2;
-    const dstIdx = (cropWidth * y + x) << 2;
-
-    cropped.data[dstIdx] = logo.data[srcIdx];
-    cropped.data[dstIdx + 1] = logo.data[srcIdx + 1];
-    cropped.data[dstIdx + 2] = logo.data[srcIdx + 2];
-    cropped.data[dstIdx + 3] = logo.data[srcIdx + 3];
-  }
-}
-
-// Create a 32x32 favicon (we'll scale the cropped logo)
+// Create a 32x32 favicon
 const favicon = new PNG({ width: 32, height: 32 });
 
 // Calculate scaling to fit 32x32 while maintaining aspect ratio
 // Increase size by 30% (multiply scale by 1.3)
-const scaleX = 32 / cropWidth;
-const scaleY = 32 / cropHeight;
+const scaleX = 32 / logo.width;
+const scaleY = 32 / logo.height;
 const scale = Math.min(scaleX, scaleY) * 1.3;
 
-const newWidth = Math.floor(cropWidth * scale);
-const newHeight = Math.floor(cropHeight * scale);
+const newWidth = Math.floor(logo.width * scale);
+const newHeight = Math.floor(logo.height * scale);
 const offsetX = Math.floor((32 - newWidth) / 2);
 const offsetY = Math.floor((32 - newHeight) / 2);
 
@@ -56,13 +34,13 @@ for (let y = 0; y < newHeight; y++) {
   for (let x = 0; x < newWidth; x++) {
     const srcX = Math.floor(x / scale);
     const srcY = Math.floor(y / scale);
-    const srcIdx = (cropWidth * srcY + srcX) << 2;
+    const srcIdx = (logo.width * srcY + srcX) << 2;
     const dstIdx = (32 * (y + offsetY) + (x + offsetX)) << 2;
 
-    favicon.data[dstIdx] = cropped.data[srcIdx];
-    favicon.data[dstIdx + 1] = cropped.data[srcIdx + 1];
-    favicon.data[dstIdx + 2] = cropped.data[srcIdx + 2];
-    favicon.data[dstIdx + 3] = cropped.data[srcIdx + 3];
+    favicon.data[dstIdx] = logo.data[srcIdx];
+    favicon.data[dstIdx + 1] = logo.data[srcIdx + 1];
+    favicon.data[dstIdx + 2] = logo.data[srcIdx + 2];
+    favicon.data[dstIdx + 3] = logo.data[srcIdx + 3];
   }
 }
 
