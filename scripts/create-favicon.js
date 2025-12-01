@@ -30,9 +30,10 @@ for (let y = 0; y < cropHeight; y++) {
 const favicon = new PNG({ width: 32, height: 32 });
 
 // Calculate scaling to fit 32x32 while maintaining aspect ratio
+// Increase size by 30% (multiply scale by 1.3)
 const scaleX = 32 / cropWidth;
 const scaleY = 32 / cropHeight;
-const scale = Math.min(scaleX, scaleY);
+const scale = Math.min(scaleX, scaleY) * 1.3;
 
 const newWidth = Math.floor(cropWidth * scale);
 const newHeight = Math.floor(cropHeight * scale);
