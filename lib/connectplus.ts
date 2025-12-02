@@ -173,11 +173,13 @@ export class ConnectPlusClient {
       });
       console.log('✅ Dataflow saved successfully:', result);
 
-      // Return enhanced result with the name for display
+      // Return enhanced result with configuration data for the UI form
       return {
         ...result,
         name: uniqueName,
         description,
+        dataflowUuid,
+        blocks, // Include blocks with blockInputs for the configuration form
       };
     } catch (error: any) {
       console.error('❌ Error in createSimpleDataflow:', error.message);

@@ -1,11 +1,36 @@
 import React from 'react';
 
+interface DataflowConfig {
+  dataflowUuid: string;
+  name: string;
+  description: string;
+  schedule?: string;
+  blocks: any[];
+}
+
 interface MessageRendererProps {
   content: string;
   onCopy: (text: string) => void;
+  onConfigureDataflow?: (config: DataflowConfig) => void;
 }
 
-export default function MessageRenderer({ content, onCopy }: MessageRendererProps) {
+export default function MessageRenderer({ content, onCopy, onConfigureDataflow }: MessageRendererProps) {
+  // Extract dataflow config if present
+  const extractDataflowConfig = (text: string): DataflowConfig | null => {
+    const match = text.match(/\[DATAFLOW_CONFIG\]([\s\S]*?)\[\/DATAFLOW_CONFIG\]/);
+    if (match) {
+      try {
+        return JSON.parse(match[1].trim());
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const dataflowConfig = extractDataflowConfig(content);
+  // Remove the config block from displayed content
+  const displayContent = content.replace(/\[DATAFLOW_CONFIG\][\s\S]*?\[\/DATAFLOW_CONFIG\]/g, '').trim();
   // Helper function to render a subset of lines (for details content)
   const renderLines = (lines: string[], startKey = 0): React.ReactNode[] => {
     const elements: React.ReactNode[] = [];
@@ -59,7 +84,7 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
   };
 
   const renderContent = () => {
-    const lines = content.split('\n');
+    const lines = displayContent.split('\n');
     const elements: React.ReactNode[] = [];
     let i = 0;
 
@@ -283,5 +308,22 @@ export default function MessageRenderer({ content, onCopy }: MessageRendererProp
     return parts.length > 0 ? parts : text;
   };
 
-  return <div className="text-sm">{renderContent()}</div>;
+  return (
+    <div className="text-sm">
+      {renderContent()}
+      {dataflowConfig && onConfigureDataflow && (
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-900 mb-3">
+            The dataflow has been created with default values. Click below to configure the actual values for each block.
+          </p>
+          <button
+            onClick={() => onConfigureDataflow(dataflowConfig)}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors"
+          >
+            ⚙️ Configure Dataflow
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }

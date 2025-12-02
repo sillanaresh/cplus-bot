@@ -180,8 +180,42 @@ User: "I have a file in S3 location, I want to read that and make API calls"
    - Display: Name, Description, Dataflow ID, Status, Version
    - Example: "Dataflow name: SFTP-to-S3_1764052569166" (NOT "SFTP-to-S3")
    - The epoch timestamp is part of the official name - ALWAYS include it
+   - After creating a dataflow, ALWAYS include a special configuration block (see below)
 
-3. **RAW API TRANSPARENCY - MANDATORY**:
+3. **DATAFLOW CONFIGURATION UI - ABSOLUTELY MANDATORY**:
+
+   🚨 CRITICAL: After EVERY createSimpleDataflow call, you MUST include a special configuration block 🚨
+
+   STEP 1: Show success message with these exact fields from the API response:
+   - Dataflow Name: (use the "name" field from response)
+   - Description: (use the "description" field from response)
+   - Dataflow UUID: (use the "dataflowUuid" field from response)
+
+   STEP 2: IMMEDIATELY after showing the details, add this EXACT block structure:
+
+   [DATAFLOW_CONFIG]
+   {
+     "dataflowUuid": "paste-actual-uuid-here",
+     "name": "paste-actual-name-here",
+     "description": "paste-actual-description-here",
+     "schedule": "0/1 0 * * * ? *",
+     "blocks": [paste-complete-blocks-array-here]
+   }
+   [/DATAFLOW_CONFIG]
+
+   STEP 3: After the closing tag, add: "Click the Configure Dataflow button above to set actual values."
+
+   🚨 NON-NEGOTIABLE RULES 🚨:
+   - You MUST include the [DATAFLOW_CONFIG] block - DO NOT SKIP THIS
+   - The tags [DATAFLOW_CONFIG] and [/DATAFLOW_CONFIG] must be on their own lines
+   - Between the tags, put ONLY the JSON object (no extra text)
+   - Use the EXACT "blocks" array from the createSimpleDataflow response
+   - Include ALL fields in each blockInput (id, name, key, type, value, htmlType, dynamicType, childrenFields, selectValues)
+   - Do NOT truncate, summarize, or modify the blocks array
+   - The JSON must be valid and parseable
+   - This block triggers the configuration UI button - without it, users cannot configure the dataflow
+
+4. **RAW API TRANSPARENCY - MANDATORY**:
 
    🚨 THIS IS NON-NEGOTIABLE 🚨
 

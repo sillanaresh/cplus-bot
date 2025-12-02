@@ -4,12 +4,22 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChat } from 'ai/react';
 import MessageRenderer from '@/components/MessageRenderer';
+import BlockConfigForm from '../components/BlockConfigForm';
+
+interface DataflowConfig {
+  dataflowUuid: string;
+  name: string;
+  description: string;
+  schedule?: string;
+  blocks: any[];
+}
 
 export default function ChatPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [configFormData, setConfigFormData] = useState<DataflowConfig | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -75,6 +85,40 @@ export default function ChatPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
+  };
+
+  const handleConfigureDataflow = (config: DataflowConfig) => {
+    setConfigFormData(config);
+  };
+
+  const handleSaveConfiguration = async (updatedBlocks: any[]) => {
+    if (!configFormData) return;
+
+    const cookie = sessionStorage.getItem('connectplus_cookie');
+    const orgId = sessionStorage.getItem('connectplus_org_id');
+
+    const response = await fetch('/api/dataflow/configure', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-connectplus-cookie': cookie || '',
+        'x-connectplus-org-id': orgId || '',
+      },
+      body: JSON.stringify({
+        dataflowUuid: configFormData.dataflowUuid,
+        description: configFormData.description,
+        schedule: configFormData.schedule || '0/1 0 * * * ? *',
+        blocks: updatedBlocks,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save configuration');
+    }
+
+    // Success! Close the form and show success message
+    setConfigFormData(null);
+    alert('Configuration saved successfully!');
   };
 
   if (!isAuthenticated) {
@@ -208,7 +252,11 @@ export default function ChatPage() {
                   {message.role === 'user' ? (
                     <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                   ) : (
-                    <MessageRenderer content={message.content} onCopy={copyToClipboard} />
+                    <MessageRenderer
+                      content={message.content}
+                      onCopy={copyToClipboard}
+                      onConfigureDataflow={handleConfigureDataflow}
+                    />
                   )}
                 </div>
               </div>
@@ -250,6 +298,19 @@ export default function ChatPage() {
           </form>
         </div>
       </div>
+
+      {/* Configuration Form Modal */}
+      {configFormData && (
+        <BlockConfigForm
+          dataflowUuid={configFormData.dataflowUuid}
+          dataflowName={configFormData.name}
+          description={configFormData.description}
+          schedule={configFormData.schedule}
+          blocks={configFormData.blocks}
+          onSubmit={handleSaveConfiguration}
+          onCancel={() => setConfigFormData(null)}
+        />
+      )}
     </div>
   );
 }
